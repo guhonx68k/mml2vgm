@@ -41,6 +41,7 @@ namespace mml2vgmIDEx64
             };
 
             Init();
+            groupBox29.Visible = false;
             //tabControl1.TabPages.Remove(tabPage13);
             //tcSetting.TabPages.Remove(tpNSF);
             tabControl3.TabPages.Remove(tabPage15);

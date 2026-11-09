@@ -873,6 +873,20 @@ namespace mml2vgmIDEx64
             OpenSettingDialog(FrmSetting.OpenMode.Option);
         }
 
+        private void TsmiFormat_Click(object sender, EventArgs e)
+        {
+            using (FrmFormatSetting frmFormatSetting = new FrmFormatSetting(setting))
+            {
+                if (frmFormatSetting.ShowDialog(this) != DialogResult.OK)
+                {
+                    return;
+                }
+
+                flgReinit = true;
+                Reinit(frmFormatSetting.setting);
+            }
+        }
+
         private void TsmiShortCutKey_Click(object sender, EventArgs e)
         {
             OpenSettingDialog(FrmSetting.OpenMode.ShortCutKey);

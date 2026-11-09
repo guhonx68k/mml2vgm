@@ -119,6 +119,7 @@ namespace mml2vgmIDEx64
             ツールTToolStripMenuItem = new ToolStripMenuItem();
             tsmiMakeCSM = new ToolStripMenuItem();
             tsmiShortCutKey = new ToolStripMenuItem();
+            tsmiFormat = new ToolStripMenuItem();
             tsmiOption = new ToolStripMenuItem();
             TsmiHelp = new ToolStripMenuItem();
             TsmiTutorial = new ToolStripMenuItem();
@@ -658,7 +659,7 @@ namespace mml2vgmIDEx64
             // ツールTToolStripMenuItem
             // 
             resources.ApplyResources(ツールTToolStripMenuItem, "ツールTToolStripMenuItem");
-            ツールTToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { tsmiMakeCSM, tsmiShortCutKey, tsmiOption });
+            ツールTToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { tsmiMakeCSM, tsmiShortCutKey, tsmiFormat, tsmiOption });
             ツールTToolStripMenuItem.Name = "ツールTToolStripMenuItem";
             // 
             // tsmiMakeCSM
@@ -672,6 +673,13 @@ namespace mml2vgmIDEx64
             resources.ApplyResources(tsmiShortCutKey, "tsmiShortCutKey");
             tsmiShortCutKey.Name = "tsmiShortCutKey";
             tsmiShortCutKey.Click += TsmiShortCutKey_Click;
+            // 
+            // tsmiFormat
+            // 
+            tsmiFormat.Name = "tsmiFormat";
+            tsmiFormat.Size = new Size(174, 34);
+            tsmiFormat.Text = "書式設定(&F)";
+            tsmiFormat.Click += TsmiFormat_Click;
             // 
             // tsmiOption
             // 
@@ -786,6 +794,7 @@ namespace mml2vgmIDEx64
         private System.Windows.Forms.ToolStripMenuItem TsmiShowLog;
         private System.Windows.Forms.ToolStripMenuItem ツールTToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tsmiShortCutKey;
+        private System.Windows.Forms.ToolStripMenuItem tsmiFormat;
         private System.Windows.Forms.ToolStripMenuItem tsmiOption;
         private System.Windows.Forms.ToolStripMenuItem TsmiTutorial;
         private System.Windows.Forms.ToolStripMenuItem TsmiReference;
