@@ -89,6 +89,8 @@ namespace mml2vgmIDEx64
                     ) c.Visible = false;
             }
 
+            ApplyFontSetting(setting);
+
             double r = 0;
             double g = 0;
             double b = 0;
@@ -256,6 +258,23 @@ namespace mml2vgmIDEx64
                     meterBrush[j][255 - i] = new SolidBrush(c);
                 }
             }
+        }
+
+        public void ApplyFontSetting(Setting setting)
+        {
+            Font font;
+            try
+            {
+                font = new Font(setting.other.PartCounterTextFontName, setting.other.PartCounterTextFontSize, setting.other.PartCounterTextFontStyle);
+            }
+            catch
+            {
+                font = new Font("MS UI Gothic", 9.0f, FontStyle.Regular);
+            }
+
+            dgvPartCounter.DefaultCellStyle.Font = font;
+            dgvPartCounter.RowsDefaultCellStyle.Font = font;
+            dgvPartCounter.RowTemplate.DefaultCellStyle.Font = font;
         }
 
         protected double[][] LoadVolumeBarColorScheme(string stPath)

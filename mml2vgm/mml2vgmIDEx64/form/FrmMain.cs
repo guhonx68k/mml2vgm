@@ -3673,6 +3673,10 @@ namespace mml2vgmIDEx64
 
 
             this.setting = setting;
+            frmPartCounter?.ApplyFontSetting(setting);
+            frmFolderTree?.ApplyFontSetting(setting);
+            frmErrorList?.ApplyFontSetting(setting);
+            frmLog?.ApplyFontSetting(setting);
             this.setting.Save();
 
             Log.ForcedWrite("設定が変更されたため、再度Audio初期化処理開始");

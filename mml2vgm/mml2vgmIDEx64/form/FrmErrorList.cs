@@ -15,8 +15,26 @@ namespace mml2vgmIDEx64
             this.dataGridView1.BackgroundColor = Color.FromArgb(setting.ColorScheme.ErrorList_BackColor);
             this.dataGridView1.DefaultCellStyle.BackColor = Color.FromArgb(setting.ColorScheme.ErrorList_BackColor);
             this.dataGridView1.ForeColor = Color.FromArgb(setting.ColorScheme.ErrorList_ForeColor);
+            ApplyFontSetting(setting);
 
             Common.SetDoubleBuffered(dataGridView1);
+        }
+
+        public void ApplyFontSetting(Setting setting)
+        {
+            Font font;
+            try
+            {
+                font = new Font(setting.other.ErrorListTextFontName, setting.other.ErrorListTextFontSize, setting.other.ErrorListTextFontStyle);
+            }
+            catch
+            {
+                font = new Font("Consolas", 9.0f, FontStyle.Regular);
+            }
+
+            dataGridView1.DefaultCellStyle.Font = font;
+            dataGridView1.RowsDefaultCellStyle.Font = font;
+            dataGridView1.RowTemplate.DefaultCellStyle.Font = font;
         }
         protected override string GetPersistString()
         {

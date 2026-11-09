@@ -2054,6 +2054,34 @@ namespace mml2vgmIDEx64
             public float TextFontSize { get => _TextFontSize; set => _TextFontSize = value; }
             private FontStyle _TextFontStyle = FontStyle.Regular;
             public FontStyle TextFontStyle { get => _TextFontStyle; set => _TextFontStyle = value; }
+
+            private string _PartCounterTextFontName = "MS UI Gothic";
+            public string PartCounterTextFontName { get => _PartCounterTextFontName; set => _PartCounterTextFontName = value; }
+            private float _PartCounterTextFontSize = 9.0f;
+            public float PartCounterTextFontSize { get => _PartCounterTextFontSize; set => _PartCounterTextFontSize = value; }
+            private FontStyle _PartCounterTextFontStyle = FontStyle.Regular;
+            public FontStyle PartCounterTextFontStyle { get => _PartCounterTextFontStyle; set => _PartCounterTextFontStyle = value; }
+
+            private string _FolderTextFontName = "MS UI Gothic";
+            public string FolderTextFontName { get => _FolderTextFontName; set => _FolderTextFontName = value; }
+            private float _FolderTextFontSize = 9.0f;
+            public float FolderTextFontSize { get => _FolderTextFontSize; set => _FolderTextFontSize = value; }
+            private FontStyle _FolderTextFontStyle = FontStyle.Regular;
+            public FontStyle FolderTextFontStyle { get => _FolderTextFontStyle; set => _FolderTextFontStyle = value; }
+
+            private string _ErrorListTextFontName = "Consolas";
+            public string ErrorListTextFontName { get => _ErrorListTextFontName; set => _ErrorListTextFontName = value; }
+            private float _ErrorListTextFontSize = 9.0f;
+            public float ErrorListTextFontSize { get => _ErrorListTextFontSize; set => _ErrorListTextFontSize = value; }
+            private FontStyle _ErrorListTextFontStyle = FontStyle.Regular;
+            public FontStyle ErrorListTextFontStyle { get => _ErrorListTextFontStyle; set => _ErrorListTextFontStyle = value; }
+
+            private string _LogTextFontName = "Consolas";
+            public string LogTextFontName { get => _LogTextFontName; set => _LogTextFontName = value; }
+            private float _LogTextFontSize = 9.0f;
+            public float LogTextFontSize { get => _LogTextFontSize; set => _LogTextFontSize = value; }
+            private FontStyle _LogTextFontStyle = FontStyle.Regular;
+            public FontStyle LogTextFontStyle { get => _LogTextFontStyle; set => _LogTextFontStyle = value; }
             public int TabWidth { get => _TabWidth; set => _TabWidth = value; }
             private int _TabWidth = 8;
             private string[] _GwiFileHistory = null;
@@ -2132,6 +2160,18 @@ namespace mml2vgmIDEx64
                 other.TextFontName = this.TextFontName;
                 other.TextFontSize = this.TextFontSize;
                 other.TextFontStyle = this.TextFontStyle;
+                other.PartCounterTextFontName = this.PartCounterTextFontName;
+                other.PartCounterTextFontSize = this.PartCounterTextFontSize;
+                other.PartCounterTextFontStyle = this.PartCounterTextFontStyle;
+                other.FolderTextFontName = this.FolderTextFontName;
+                other.FolderTextFontSize = this.FolderTextFontSize;
+                other.FolderTextFontStyle = this.FolderTextFontStyle;
+                other.ErrorListTextFontName = this.ErrorListTextFontName;
+                other.ErrorListTextFontSize = this.ErrorListTextFontSize;
+                other.ErrorListTextFontStyle = this.ErrorListTextFontStyle;
+                other.LogTextFontName = this.LogTextFontName;
+                other.LogTextFontSize = this.LogTextFontSize;
+                other.LogTextFontStyle = this.LogTextFontStyle;
                 other.GwiFileHistory = this.GwiFileHistory;
                 other.OpenedEditorFiles = this.OpenedEditorFiles;
                 other.LastActiveEditorFile = this.LastActiveEditorFile;

@@ -14,10 +14,23 @@ namespace mml2vgmIDEx64
             InitializeComponent();
             this.tbLog.BackColor = Color.FromArgb(setting.ColorScheme.Log_BackColor);
             this.tbLog.ForeColor = Color.FromArgb(setting.ColorScheme.Log_ForeColor);
+            ApplyFontSetting(setting);
             theme.ApplyTo(toolStrip1);
 
             Common.SetDoubleBuffered(this);
             Common.SetDoubleBuffered(tbLog);
+        }
+
+        public void ApplyFontSetting(Setting setting)
+        {
+            try
+            {
+                tbLog.Font = new Font(setting.other.LogTextFontName, setting.other.LogTextFontSize, setting.other.LogTextFontStyle);
+            }
+            catch
+            {
+                tbLog.Font = new Font("Consolas", 9.0f, FontStyle.Regular);
+            }
         }
 
         public void ClearLog()

@@ -35,6 +35,19 @@ namespace mml2vgmIDEx64
             dockPanel.Theme.ApplyTo(toolStrip1);
 
             Common.SetDoubleBuffered(tvFolderTree);
+            ApplyFontSetting(setting);
+        }
+
+        public void ApplyFontSetting(Setting setting)
+        {
+            try
+            {
+                tvFolderTree.Font = new Font(setting.other.FolderTextFontName, setting.other.FolderTextFontSize, setting.other.FolderTextFontStyle);
+            }
+            catch
+            {
+                tvFolderTree.Font = new Font("MS UI Gothic", 9.0f, FontStyle.Regular);
+            }
         }
 
         private void FrmFolderTree_FormClosing(object sender, FormClosingEventArgs e)
