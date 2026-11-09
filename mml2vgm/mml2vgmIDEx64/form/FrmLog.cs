@@ -15,6 +15,7 @@ namespace mml2vgmIDEx64
             this.tbLog.BackColor = Color.FromArgb(setting.ColorScheme.Log_BackColor);
             this.tbLog.ForeColor = Color.FromArgb(setting.ColorScheme.Log_ForeColor);
             ApplyFontSetting(setting);
+            ApplyScrollBarTheme(setting);
             theme.ApplyTo(toolStrip1);
 
             Common.SetDoubleBuffered(this);
@@ -31,6 +32,11 @@ namespace mml2vgmIDEx64
             {
                 tbLog.Font = new Font("Consolas", 9.0f, FontStyle.Regular);
             }
+        }
+
+        public void ApplyScrollBarTheme(Setting setting)
+        {
+            Common.ApplyScrollBarTheme(tbLog, setting.other.ScrollBarTheme);
         }
 
         public void ClearLog()

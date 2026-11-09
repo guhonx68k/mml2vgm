@@ -14,6 +14,9 @@ namespace mml2vgmIDEx64
 {
     public static class Common
     {
+        [DllImport("uxtheme.dll", CharSet = CharSet.Unicode)]
+        private static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
+
         public const int DEV_WaveOut = 0;
         public const int DEV_DirectSound = 1;
         public const int DEV_WasapiOut = 2;
@@ -35,6 +38,52 @@ namespace mml2vgmIDEx64
                null,
                control,
                new object[] { true });
+        }
+
+        public static void ApplyScrollBarTheme(Control control, int mode)
+        {
+            if (control == null || control.IsDisposed) return;
+
+            string themeName = mode == 1 ? "DarkMode_Explorer" : "Explorer";
+            ApplyScrollBarThemeRecursive(control, themeName);
+        }
+
+        private static void ApplyScrollBarThemeRecursive(Control control, string themeName)
+        {
+            if (control == null || control.IsDisposed) return;
+
+            if (RequiresScrollBarTheme(control))
+            {
+                try
+                {
+                    if (!control.IsHandleCreated)
+                    {
+                        var handle = control.Handle;
+                    }
+                    SetWindowTheme(control.Handle, themeName, null);
+                }
+                catch
+                {
+                }
+            }
+
+            foreach (Control child in control.Controls)
+            {
+                ApplyScrollBarThemeRecursive(child, themeName);
+            }
+        }
+
+        private static bool RequiresScrollBarTheme(Control control)
+        {
+            if (control is TextBoxBase) return true;
+            if (control is DataGridView) return true;
+            if (control is TreeView) return true;
+            if (control is ListView) return true;
+            if (control is RichTextBox) return true;
+            if (control is Panel panel && panel.AutoScroll) return true;
+            if (control.GetType().FullName == "Sgry.Azuki.WinForms.AzukiControl") return true;
+
+            return false;
         }
 
         public static string AssemblyTitle

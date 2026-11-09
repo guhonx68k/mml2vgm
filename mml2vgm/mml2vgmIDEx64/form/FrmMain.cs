@@ -3668,7 +3668,9 @@ namespace mml2vgmIDEx64
 
             foreach (var dc in dpMain.Documents)
             {
-                ((FrmEditor)dc).azukiControl.Font = new Font(setting.other.TextFontName, setting.other.TextFontSize, setting.other.TextFontStyle);
+                FrmEditor editor = (FrmEditor)dc;
+                editor.azukiControl.Font = new Font(setting.other.TextFontName, setting.other.TextFontSize, setting.other.TextFontStyle);
+                editor.ApplyScrollBarTheme(setting);
             }
 
 
@@ -3677,6 +3679,10 @@ namespace mml2vgmIDEx64
             frmFolderTree?.ApplyFontSetting(setting);
             frmErrorList?.ApplyFontSetting(setting);
             frmLog?.ApplyFontSetting(setting);
+            frmPartCounter?.ApplyScrollBarTheme(setting);
+            frmFolderTree?.ApplyScrollBarTheme(setting);
+            frmErrorList?.ApplyScrollBarTheme(setting);
+            frmLog?.ApplyScrollBarTheme(setting);
             this.setting.Save();
 
             Log.ForcedWrite("設定が変更されたため、再度Audio初期化処理開始");

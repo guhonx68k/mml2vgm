@@ -90,6 +90,7 @@ namespace mml2vgmIDEx64
             }
 
             ApplyFontSetting(setting);
+            ApplyScrollBarTheme(setting);
 
             double r = 0;
             double g = 0;
@@ -275,6 +276,11 @@ namespace mml2vgmIDEx64
             dgvPartCounter.DefaultCellStyle.Font = font;
             dgvPartCounter.RowsDefaultCellStyle.Font = font;
             dgvPartCounter.RowTemplate.DefaultCellStyle.Font = font;
+        }
+
+        public void ApplyScrollBarTheme(Setting setting)
+        {
+            Common.ApplyScrollBarTheme(dgvPartCounter, setting.other.ScrollBarTheme);
         }
 
         protected double[][] LoadVolumeBarColorScheme(string stPath)

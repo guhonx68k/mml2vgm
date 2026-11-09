@@ -36,6 +36,7 @@ namespace mml2vgmIDEx64
 
             Common.SetDoubleBuffered(tvFolderTree);
             ApplyFontSetting(setting);
+            ApplyScrollBarTheme(setting);
         }
 
         public void ApplyFontSetting(Setting setting)
@@ -48,6 +49,11 @@ namespace mml2vgmIDEx64
             {
                 tvFolderTree.Font = new Font("MS UI Gothic", 9.0f, FontStyle.Regular);
             }
+        }
+
+        public void ApplyScrollBarTheme(Setting setting)
+        {
+            Common.ApplyScrollBarTheme(tvFolderTree, setting.other.ScrollBarTheme);
         }
 
         private void FrmFolderTree_FormClosing(object sender, FormClosingEventArgs e)

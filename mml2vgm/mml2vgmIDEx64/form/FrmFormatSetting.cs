@@ -37,12 +37,14 @@ namespace mml2vgmIDEx64
         private readonly Dictionary<string, FontSettingValue> categoryFontValues;
         private readonly Dictionary<string, FontSettingValue> defaultCategoryFontValues;
         private readonly GroupBox gbFont;
+        private readonly ComboBox cmbScrollBarTheme;
         private readonly Label lblFontSummary;
         private readonly Button btnFontSelect;
         private readonly Button btnFontReset;
         private readonly Label lblTargetCategory;
         private Font previewFont;
         private string activeFontCategory = "Editor";
+        private int selectedScrollBarTheme;
 
         public Setting setting { get; private set; }
 
@@ -77,6 +79,7 @@ namespace mml2vgmIDEx64
                 ["Error list"] = new FontSettingValue(defaultSetting.other.ErrorListTextFontName, defaultSetting.other.ErrorListTextFontSize, defaultSetting.other.ErrorListTextFontStyle),
                 ["Log"] = new FontSettingValue(defaultSetting.other.LogTextFontName, defaultSetting.other.LogTextFontSize, defaultSetting.other.LogTextFontStyle)
             };
+            selectedScrollBarTheme = this.setting.other.ScrollBarTheme;
 
             categoryPages = new Dictionary<string, Control>();
 
@@ -179,7 +182,34 @@ namespace mml2vgmIDEx64
             Panel fontPage = new Panel { Dock = DockStyle.Fill };
             fontPage.Controls.Add(gbFont);
 
-            categoryPages.Add("共通", CreatePlaceholderPage("共通"));
+            GroupBox gbCommon = new GroupBox
+            {
+                Text = "スクロールバー",
+                Dock = DockStyle.Top,
+                Height = 84
+            };
+            Label lblScrollBarTheme = new Label
+            {
+                AutoSize = true,
+                Text = "カラー",
+                Location = new Point(16, 36)
+            };
+            cmbScrollBarTheme = new ComboBox
+            {
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Location = new Point(72, 32),
+                Width = 140
+            };
+            cmbScrollBarTheme.Items.Add("ライトモード");
+            cmbScrollBarTheme.Items.Add("ダークモード");
+            cmbScrollBarTheme.SelectedIndex = selectedScrollBarTheme == 0 ? 0 : 1;
+            cmbScrollBarTheme.SelectedIndexChanged += CmbScrollBarTheme_SelectedIndexChanged;
+            gbCommon.Controls.Add(lblScrollBarTheme);
+            gbCommon.Controls.Add(cmbScrollBarTheme);
+            Panel commonPage = new Panel { Dock = DockStyle.Fill };
+            commonPage.Controls.Add(gbCommon);
+
+            categoryPages.Add("共通", commonPage);
             categoryPages.Add("Editor", fontPage);
             categoryPages.Add("Part counter", fontPage);
             categoryPages.Add("Folder", fontPage);
@@ -290,6 +320,11 @@ namespace mml2vgmIDEx64
             pnlContent.ResumeLayout();
         }
 
+        private void CmbScrollBarTheme_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            selectedScrollBarTheme = cmbScrollBarTheme.SelectedIndex == 0 ? 0 : 1;
+        }
+
         private Font CreateFont(FontSettingValue v)
         {
             try
@@ -366,6 +401,7 @@ namespace mml2vgmIDEx64
             setting.other.LogTextFontName = log.Name;
             setting.other.LogTextFontSize = log.Size;
             setting.other.LogTextFontStyle = log.Style;
+            setting.other.ScrollBarTheme = selectedScrollBarTheme;
         }
 
         protected override void OnFormClosed(FormClosedEventArgs e)

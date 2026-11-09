@@ -2082,6 +2082,8 @@ namespace mml2vgmIDEx64
             public float LogTextFontSize { get => _LogTextFontSize; set => _LogTextFontSize = value; }
             private FontStyle _LogTextFontStyle = FontStyle.Regular;
             public FontStyle LogTextFontStyle { get => _LogTextFontStyle; set => _LogTextFontStyle = value; }
+            private int _ScrollBarTheme = 1;
+            public int ScrollBarTheme { get => _ScrollBarTheme; set => _ScrollBarTheme = value; }
             public int TabWidth { get => _TabWidth; set => _TabWidth = value; }
             private int _TabWidth = 8;
             private string[] _GwiFileHistory = null;
@@ -2172,6 +2174,7 @@ namespace mml2vgmIDEx64
                 other.LogTextFontName = this.LogTextFontName;
                 other.LogTextFontSize = this.LogTextFontSize;
                 other.LogTextFontStyle = this.LogTextFontStyle;
+                other.ScrollBarTheme = this.ScrollBarTheme;
                 other.GwiFileHistory = this.GwiFileHistory;
                 other.OpenedEditorFiles = this.OpenedEditorFiles;
                 other.LastActiveEditorFile = this.LastActiveEditorFile;

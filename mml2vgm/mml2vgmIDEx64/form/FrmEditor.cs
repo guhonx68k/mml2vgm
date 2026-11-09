@@ -72,6 +72,7 @@ namespace mml2vgmIDEx64
             this.fmt = fmt;
             Common.SetDoubleBuffered(this);
             Common.SetDoubleBuffered(azukiControl);
+            ApplyScrollBarTheme(setting);
         }
 
         protected override bool ProcessCmdKey(ref System.Windows.Forms.Message msg, System.Windows.Forms.Keys keyData)
@@ -145,6 +146,11 @@ namespace mml2vgmIDEx64
             azukiControl.ColorScheme.SetMarkingDecoration(3, dec);
 
             this.Controls.Add(azukiControl);
+        }
+
+        public void ApplyScrollBarTheme(Setting setting)
+        {
+            Common.ApplyScrollBarTheme(azukiControl, setting.other.ScrollBarTheme);
         }
 
         private IHighlighter setHighlighterVGMZGMZGM()

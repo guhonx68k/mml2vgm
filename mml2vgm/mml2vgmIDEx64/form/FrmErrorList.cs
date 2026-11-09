@@ -16,6 +16,7 @@ namespace mml2vgmIDEx64
             this.dataGridView1.DefaultCellStyle.BackColor = Color.FromArgb(setting.ColorScheme.ErrorList_BackColor);
             this.dataGridView1.ForeColor = Color.FromArgb(setting.ColorScheme.ErrorList_ForeColor);
             ApplyFontSetting(setting);
+            ApplyScrollBarTheme(setting);
 
             Common.SetDoubleBuffered(dataGridView1);
         }
@@ -35,6 +36,11 @@ namespace mml2vgmIDEx64
             dataGridView1.DefaultCellStyle.Font = font;
             dataGridView1.RowsDefaultCellStyle.Font = font;
             dataGridView1.RowTemplate.DefaultCellStyle.Font = font;
+        }
+
+        public void ApplyScrollBarTheme(Setting setting)
+        {
+            Common.ApplyScrollBarTheme(dataGridView1, setting.other.ScrollBarTheme);
         }
         protected override string GetPersistString()
         {
