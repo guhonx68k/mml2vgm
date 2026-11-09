@@ -118,6 +118,7 @@ namespace mml2vgmIDEx64
             tsmiScript = new ToolStripMenuItem();
             ツールTToolStripMenuItem = new ToolStripMenuItem();
             tsmiMakeCSM = new ToolStripMenuItem();
+            tsmiShortCutKey = new ToolStripMenuItem();
             tsmiOption = new ToolStripMenuItem();
             TsmiHelp = new ToolStripMenuItem();
             TsmiTutorial = new ToolStripMenuItem();
@@ -657,7 +658,7 @@ namespace mml2vgmIDEx64
             // ツールTToolStripMenuItem
             // 
             resources.ApplyResources(ツールTToolStripMenuItem, "ツールTToolStripMenuItem");
-            ツールTToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { tsmiMakeCSM, tsmiOption });
+            ツールTToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { tsmiMakeCSM, tsmiShortCutKey, tsmiOption });
             ツールTToolStripMenuItem.Name = "ツールTToolStripMenuItem";
             // 
             // tsmiMakeCSM
@@ -665,6 +666,12 @@ namespace mml2vgmIDEx64
             resources.ApplyResources(tsmiMakeCSM, "tsmiMakeCSM");
             tsmiMakeCSM.Name = "tsmiMakeCSM";
             tsmiMakeCSM.Click += tsmiMakeCSM_Click;
+            // 
+            // tsmiShortCutKey
+            // 
+            resources.ApplyResources(tsmiShortCutKey, "tsmiShortCutKey");
+            tsmiShortCutKey.Name = "tsmiShortCutKey";
+            tsmiShortCutKey.Click += TsmiShortCutKey_Click;
             // 
             // tsmiOption
             // 
@@ -778,6 +785,7 @@ namespace mml2vgmIDEx64
         private System.Windows.Forms.ToolStripMenuItem TsmiShowErrorList;
         private System.Windows.Forms.ToolStripMenuItem TsmiShowLog;
         private System.Windows.Forms.ToolStripMenuItem ツールTToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tsmiShortCutKey;
         private System.Windows.Forms.ToolStripMenuItem tsmiOption;
         private System.Windows.Forms.ToolStripMenuItem TsmiTutorial;
         private System.Windows.Forms.ToolStripMenuItem TsmiReference;
@@ -854,4 +862,3 @@ namespace mml2vgmIDEx64
         private ToolStripMenuItem TsmiReferenceMuap;
     }
 }
-

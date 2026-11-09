@@ -1145,6 +1145,12 @@
   <data name="tsmiNewMus.Text" xml:space="preserve">
     <value>New .mus</value>
   </data>
+  <data name="tsmiShortCutKey.Size" type="System.Drawing.Size, System.Drawing">
+    <value>139, 22</value>
+  </data>
+  <data name="tsmiShortCutKey.Text" xml:space="preserve">
+    <value>Shortcut Key(&amp;K)</value>
+  </data>
   <data name="tssbFast.ImageScaling" type="System.Windows.Forms.ToolStripItemImageScaling, System.Windows.Forms">
     <value>None</value>
   </data>

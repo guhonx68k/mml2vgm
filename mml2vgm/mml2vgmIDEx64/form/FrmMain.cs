@@ -870,11 +870,21 @@ namespace mml2vgmIDEx64
 
         private void TsmiOption_Click(object sender, EventArgs e)
         {
+            OpenSettingDialog(FrmSetting.OpenMode.Option);
+        }
+
+        private void TsmiShortCutKey_Click(object sender, EventArgs e)
+        {
+            OpenSettingDialog(FrmSetting.OpenMode.ShortCutKey);
+        }
+
+        private void OpenSettingDialog(FrmSetting.OpenMode mode)
+        {
             stop();
             for (int i = 0; i < 10; i++) { Application.DoEvents(); Thread.Sleep(1); }
             Audio.Close();
 
-            FrmSetting frmSetting = new FrmSetting(setting);
+            FrmSetting frmSetting = new FrmSetting(setting, mode);
             DialogResult res = frmSetting.ShowDialog();
             //if (res != DialogResult.OK)
             //{

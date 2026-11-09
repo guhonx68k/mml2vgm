@@ -12,6 +12,12 @@ namespace mml2vgmIDEx64
 {
     public partial class FrmSetting : Form
     {
+        public enum OpenMode
+        {
+            Option,
+            ShortCutKey
+        }
+
         private bool asioSupported = true;
         private bool wasapiSupported = true;
         public Setting setting = null;
@@ -20,6 +26,11 @@ namespace mml2vgmIDEx64
 
 
         public FrmSetting(Setting setting)
+            : this(setting, OpenMode.Option)
+        {
+        }
+
+        public FrmSetting(Setting setting, OpenMode mode)
         {
             this.setting = setting.Copy();
 
@@ -36,13 +47,29 @@ namespace mml2vgmIDEx64
             tabControl3.TabPages.Remove(tabPage16);
             tcSetting.TabPages.Remove(tpMIDIExp);
             //tcSetting.TabPages.Remove(tpMIDIKBD);
-            //tcSetting.TabPages.Remove(tpKeyBoard);
             tcSetting.TabPages.Remove(tpBalance);
             tcSetting.TabPages.Remove(tpOther);
             tcSetting.TabPages.Remove(tpAbout);
             tbcMIDIoutList.TabPages.Remove(tabPage2);
             tbcMIDIoutList.TabPages.Remove(tabPage3);
             tbcMIDIoutList.TabPages.Remove(tabPage4);
+
+            if (mode == OpenMode.Option)
+            {
+                tcSetting.TabPages.Remove(tpKeyBoard);
+            }
+            else
+            {
+                for (int i = tcSetting.TabPages.Count - 1; i >= 0; i--)
+                {
+                    if (tcSetting.TabPages[i] != tpKeyBoard)
+                    {
+                        tcSetting.TabPages.RemoveAt(i);
+                    }
+                }
+                tcSetting.SelectedTab = tpKeyBoard;
+                Text = tpKeyBoard.Text;
+            }
         }
 
         public void Init()
