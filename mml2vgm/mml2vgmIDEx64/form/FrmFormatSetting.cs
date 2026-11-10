@@ -36,15 +36,23 @@ namespace mml2vgmIDEx64
         private readonly HashSet<string> fontCategories;
         private readonly Dictionary<string, FontSettingValue> categoryFontValues;
         private readonly Dictionary<string, FontSettingValue> defaultCategoryFontValues;
+        private readonly HashSet<string> textColorCategories;
+        private readonly Dictionary<string, int> categoryTextColorValues;
+        private readonly Dictionary<string, int> defaultCategoryTextColorValues;
         private readonly GroupBox gbFont;
         private readonly ComboBox cmbScrollBarTheme;
         private readonly Label lblFontSummary;
         private readonly Button btnFontSelect;
         private readonly Button btnFontReset;
-        private readonly Label lblTargetCategory;
+        private readonly Button btnTextColorSelect;
+        private readonly Button btnTextColorReset;
+        private readonly Button btnCommonBackColorSelect;
+        private readonly Button btnCommonBackColorReset;
         private Font previewFont;
         private string activeFontCategory = "Editor";
         private int selectedScrollBarTheme;
+        private int selectedCommonPanelBackColor;
+        private readonly int defaultCommonPanelBackColor;
 
         public Setting setting { get; private set; }
 
@@ -64,11 +72,11 @@ namespace mml2vgmIDEx64
 
             categoryFontValues = new Dictionary<string, FontSettingValue>
             {
-                ["Editor"] = new FontSettingValue(this.setting.other.TextFontName, this.setting.other.TextFontSize, this.setting.other.TextFontStyle),
-                ["Part counter"] = new FontSettingValue(this.setting.other.PartCounterTextFontName, this.setting.other.PartCounterTextFontSize, this.setting.other.PartCounterTextFontStyle),
-                ["Folder"] = new FontSettingValue(this.setting.other.FolderTextFontName, this.setting.other.FolderTextFontSize, this.setting.other.FolderTextFontStyle),
-                ["Error list"] = new FontSettingValue(this.setting.other.ErrorListTextFontName, this.setting.other.ErrorListTextFontSize, this.setting.other.ErrorListTextFontStyle),
-                ["Log"] = new FontSettingValue(this.setting.other.LogTextFontName, this.setting.other.LogTextFontSize, this.setting.other.LogTextFontStyle)
+                ["Editor"] = new FontSettingValue(this.setting.other.PanelTextFontSettings.Editor.Name, this.setting.other.PanelTextFontSettings.Editor.Size, this.setting.other.PanelTextFontSettings.Editor.Style),
+                ["Part counter"] = new FontSettingValue(this.setting.other.PanelTextFontSettings.PartCounter.Name, this.setting.other.PanelTextFontSettings.PartCounter.Size, this.setting.other.PanelTextFontSettings.PartCounter.Style),
+                ["Folder"] = new FontSettingValue(this.setting.other.PanelTextFontSettings.Folder.Name, this.setting.other.PanelTextFontSettings.Folder.Size, this.setting.other.PanelTextFontSettings.Folder.Style),
+                ["Error list"] = new FontSettingValue(this.setting.other.PanelTextFontSettings.ErrorList.Name, this.setting.other.PanelTextFontSettings.ErrorList.Size, this.setting.other.PanelTextFontSettings.ErrorList.Style),
+                ["Log"] = new FontSettingValue(this.setting.other.PanelTextFontSettings.Log.Name, this.setting.other.PanelTextFontSettings.Log.Size, this.setting.other.PanelTextFontSettings.Log.Style)
             };
 
             defaultCategoryFontValues = new Dictionary<string, FontSettingValue>
@@ -79,7 +87,33 @@ namespace mml2vgmIDEx64
                 ["Error list"] = new FontSettingValue(defaultSetting.other.ErrorListTextFontName, defaultSetting.other.ErrorListTextFontSize, defaultSetting.other.ErrorListTextFontStyle),
                 ["Log"] = new FontSettingValue(defaultSetting.other.LogTextFontName, defaultSetting.other.LogTextFontSize, defaultSetting.other.LogTextFontStyle)
             };
+
+            textColorCategories = new HashSet<string>
+            {
+                "Part counter",
+                "Folder",
+                "Error list",
+                "Log"
+            };
+
+            categoryTextColorValues = new Dictionary<string, int>
+            {
+                ["Part counter"] = ResolveCategoryTextColorArgb(this.setting, "Part counter"),
+                ["Folder"] = ResolveCategoryTextColorArgb(this.setting, "Folder"),
+                ["Error list"] = ResolveCategoryTextColorArgb(this.setting, "Error list"),
+                ["Log"] = ResolveCategoryTextColorArgb(this.setting, "Log")
+            };
+
+            defaultCategoryTextColorValues = new Dictionary<string, int>
+            {
+                ["Part counter"] = ResolveCategoryTextColorArgb(defaultSetting, "Part counter"),
+                ["Folder"] = ResolveCategoryTextColorArgb(defaultSetting, "Folder"),
+                ["Error list"] = ResolveCategoryTextColorArgb(defaultSetting, "Error list"),
+                ["Log"] = ResolveCategoryTextColorArgb(defaultSetting, "Log")
+            };
             selectedScrollBarTheme = this.setting.other.ScrollBarTheme;
+            selectedCommonPanelBackColor = this.setting.other.CommonPanelBackColor;
+            defaultCommonPanelBackColor = defaultSetting.other.CommonPanelBackColor;
 
             categoryPages = new Dictionary<string, Control>();
 
@@ -137,18 +171,11 @@ namespace mml2vgmIDEx64
 
             gbFont = new GroupBox
             {
-                Text = "フォント",
+                Text = "テキスト",
                 Dock = DockStyle.Top,
-                Height = 104
+                Height = 140
             };
             gbFont.Resize += GbFont_Resize;
-
-            lblTargetCategory = new Label
-            {
-                AutoSize = true,
-                Text = "対象: Editor",
-                Location = new Point(16, 16)
-            };
 
             lblFontSummary = new Label
             {
@@ -174,10 +201,26 @@ namespace mml2vgmIDEx64
             };
             btnFontReset.Click += BtnFontReset_Click;
 
-            gbFont.Controls.Add(lblTargetCategory);
+            btnTextColorSelect = new Button
+            {
+                Text = "色...",
+                Size = new Size(74, 26),
+                UseVisualStyleBackColor = false
+            };
+            btnTextColorSelect.Click += BtnTextColorSelect_Click;
+
+            btnTextColorReset = new Button
+            {
+                Text = "リセット",
+                Size = new Size(74, 26)
+            };
+            btnTextColorReset.Click += BtnTextColorReset_Click;
+
             gbFont.Controls.Add(lblFontSummary);
             gbFont.Controls.Add(btnFontSelect);
             gbFont.Controls.Add(btnFontReset);
+            gbFont.Controls.Add(btnTextColorSelect);
+            gbFont.Controls.Add(btnTextColorReset);
 
             Panel fontPage = new Panel { Dock = DockStyle.Fill };
             fontPage.Controls.Add(gbFont);
@@ -206,7 +249,40 @@ namespace mml2vgmIDEx64
             cmbScrollBarTheme.SelectedIndexChanged += CmbScrollBarTheme_SelectedIndexChanged;
             gbCommon.Controls.Add(lblScrollBarTheme);
             gbCommon.Controls.Add(cmbScrollBarTheme);
+
+            GroupBox gbCommonBackColor = new GroupBox
+            {
+                Text = "背景色",
+                Dock = DockStyle.Top,
+                Height = 84
+            };
+            Label lblCommonBackColor = new Label
+            {
+                AutoSize = true,
+                Text = "カラー",
+                Location = new Point(16, 36)
+            };
+            btnCommonBackColorSelect = new Button
+            {
+                Text = "色...",
+                Location = new Point(72, 32),
+                Size = new Size(120, 26),
+                UseVisualStyleBackColor = false
+            };
+            btnCommonBackColorSelect.Click += BtnCommonBackColorSelect_Click;
+            btnCommonBackColorReset = new Button
+            {
+                Text = "リセット",
+                Location = new Point(200, 32),
+                Size = new Size(74, 26)
+            };
+            btnCommonBackColorReset.Click += BtnCommonBackColorReset_Click;
+            gbCommonBackColor.Controls.Add(lblCommonBackColor);
+            gbCommonBackColor.Controls.Add(btnCommonBackColorSelect);
+            gbCommonBackColor.Controls.Add(btnCommonBackColorReset);
+
             Panel commonPage = new Panel { Dock = DockStyle.Fill };
+            commonPage.Controls.Add(gbCommonBackColor);
             commonPage.Controls.Add(gbCommon);
 
             categoryPages.Add("共通", commonPage);
@@ -244,6 +320,7 @@ namespace mml2vgmIDEx64
             LayoutBottomButtons();
             LayoutFontControls();
             UpdateFontSummary();
+            UpdateCommonPanelBackgroundButton();
             lstCategory.SelectedIndex = 0;
         }
 
@@ -295,10 +372,11 @@ namespace mml2vgmIDEx64
             int rightX = Math.Max(16, gbFont.ClientSize.Width - btnFontSelect.Width - 10);
             btnFontSelect.Location = new Point(rightX, 20);
             btnFontReset.Location = new Point(rightX, 50);
+            btnTextColorSelect.Location = new Point(rightX, 80);
+            btnTextColorReset.Location = new Point(Math.Max(16, rightX - btnTextColorReset.Width - 8), 80);
 
-            lblTargetCategory.Location = new Point(16, 22);
-            lblFontSummary.Location = new Point(16, 50);
-            lblFontSummary.Size = new Size(Math.Max(120, rightX - 24), 26);
+            lblFontSummary.Location = new Point(16, 24);
+            lblFontSummary.Size = new Size(Math.Max(120, rightX - 24), 56);
         }
 
         private void LstCategory_SelectedIndexChanged(object sender, EventArgs e)
@@ -341,12 +419,21 @@ namespace mml2vgmIDEx64
         {
             if (!categoryFontValues.TryGetValue(activeFontCategory, out FontSettingValue v)) return;
 
-            lblTargetCategory.Text = $"対象: {activeFontCategory}";
-            lblFontSummary.Text = $"{v.Name}, {v.Size}, {v.Style}";
+            lblFontSummary.Text = $"サンプル 123 ABC あいう\r\n{v.Name}, {v.Size}, {v.Style}";
 
             previewFont?.Dispose();
             previewFont = CreateFont(v);
             lblFontSummary.Font = previewFont;
+
+            Color backgroundColor = GetCategoryBackgroundColor(activeFontCategory);
+            Color textColor = GetCategoryTextColor(activeFontCategory);
+            lblFontSummary.BackColor = backgroundColor;
+            lblFontSummary.ForeColor = textColor;
+
+            bool canEditTextColor = textColorCategories.Contains(activeFontCategory);
+            btnTextColorSelect.Enabled = canEditTextColor;
+            btnTextColorReset.Enabled = canEditTextColor;
+            UpdateColorSampleButton(textColor, canEditTextColor);
         }
 
         private void BtnFontSelect_Click(object sender, EventArgs e)
@@ -375,33 +462,185 @@ namespace mml2vgmIDEx64
             UpdateFontSummary();
         }
 
+        private void BtnTextColorSelect_Click(object sender, EventArgs e)
+        {
+            if (!textColorCategories.Contains(activeFontCategory)) return;
+            if (!categoryTextColorValues.TryGetValue(activeFontCategory, out int colorArgb)) return;
+
+            using (ColorDialog cd = new ColorDialog())
+            {
+                cd.Color = Color.FromArgb(colorArgb);
+                if (cd.ShowDialog(this) != DialogResult.OK) return;
+                categoryTextColorValues[activeFontCategory] = cd.Color.ToArgb();
+                UpdateFontSummary();
+            }
+        }
+
+        private void BtnTextColorReset_Click(object sender, EventArgs e)
+        {
+            if (!textColorCategories.Contains(activeFontCategory)) return;
+            if (!defaultCategoryTextColorValues.TryGetValue(activeFontCategory, out int colorArgb)) return;
+            categoryTextColorValues[activeFontCategory] = colorArgb;
+            UpdateFontSummary();
+        }
+
+        private void BtnCommonBackColorSelect_Click(object sender, EventArgs e)
+        {
+            using (ColorDialog cd = new ColorDialog())
+            {
+                cd.Color = Color.FromArgb(GetCommonPanelBackColorArgb(setting.ColorScheme.PartCounter_BackColor));
+                if (cd.ShowDialog(this) != DialogResult.OK) return;
+                selectedCommonPanelBackColor = cd.Color.ToArgb();
+            }
+
+            UpdateCommonPanelBackgroundButton();
+            if (fontCategories.Contains(activeFontCategory))
+            {
+                UpdateFontSummary();
+            }
+        }
+
+        private void BtnCommonBackColorReset_Click(object sender, EventArgs e)
+        {
+            selectedCommonPanelBackColor = defaultCommonPanelBackColor;
+            UpdateCommonPanelBackgroundButton();
+            if (fontCategories.Contains(activeFontCategory))
+            {
+                UpdateFontSummary();
+            }
+        }
+
         private void BtnOK_Click(object sender, EventArgs e)
         {
             FontSettingValue editor = categoryFontValues["Editor"];
-            setting.other.TextFontName = editor.Name;
-            setting.other.TextFontSize = editor.Size;
-            setting.other.TextFontStyle = editor.Style;
+            setting.other.PanelTextFontSettings.Editor.Name = editor.Name;
+            setting.other.PanelTextFontSettings.Editor.Size = editor.Size;
+            setting.other.PanelTextFontSettings.Editor.Style = editor.Style;
 
             FontSettingValue partCounter = categoryFontValues["Part counter"];
-            setting.other.PartCounterTextFontName = partCounter.Name;
-            setting.other.PartCounterTextFontSize = partCounter.Size;
-            setting.other.PartCounterTextFontStyle = partCounter.Style;
+            setting.other.PanelTextFontSettings.PartCounter.Name = partCounter.Name;
+            setting.other.PanelTextFontSettings.PartCounter.Size = partCounter.Size;
+            setting.other.PanelTextFontSettings.PartCounter.Style = partCounter.Style;
 
             FontSettingValue folder = categoryFontValues["Folder"];
-            setting.other.FolderTextFontName = folder.Name;
-            setting.other.FolderTextFontSize = folder.Size;
-            setting.other.FolderTextFontStyle = folder.Style;
+            setting.other.PanelTextFontSettings.Folder.Name = folder.Name;
+            setting.other.PanelTextFontSettings.Folder.Size = folder.Size;
+            setting.other.PanelTextFontSettings.Folder.Style = folder.Style;
 
             FontSettingValue errorList = categoryFontValues["Error list"];
-            setting.other.ErrorListTextFontName = errorList.Name;
-            setting.other.ErrorListTextFontSize = errorList.Size;
-            setting.other.ErrorListTextFontStyle = errorList.Style;
+            setting.other.PanelTextFontSettings.ErrorList.Name = errorList.Name;
+            setting.other.PanelTextFontSettings.ErrorList.Size = errorList.Size;
+            setting.other.PanelTextFontSettings.ErrorList.Style = errorList.Style;
 
             FontSettingValue log = categoryFontValues["Log"];
-            setting.other.LogTextFontName = log.Name;
-            setting.other.LogTextFontSize = log.Size;
-            setting.other.LogTextFontStyle = log.Style;
+            setting.other.PanelTextFontSettings.Log.Name = log.Name;
+            setting.other.PanelTextFontSettings.Log.Size = log.Size;
+            setting.other.PanelTextFontSettings.Log.Style = log.Style;
+            setting.other.PanelTextFontSettings.PartCounter.Color = categoryTextColorValues["Part counter"];
+            setting.other.PanelTextFontSettings.Folder.Color = categoryTextColorValues["Folder"];
+            setting.other.PanelTextFontSettings.ErrorList.Color = categoryTextColorValues["Error list"];
+            setting.other.PanelTextFontSettings.Log.Color = categoryTextColorValues["Log"];
+            setting.other.CommonPanelBackColor = selectedCommonPanelBackColor;
             setting.other.ScrollBarTheme = selectedScrollBarTheme;
+        }
+
+        private static bool IsUnsetColor(int colorArgb)
+        {
+            return colorArgb == Color.Empty.ToArgb() || colorArgb == 0;
+        }
+
+        private static int ResolveCategoryTextColorArgb(Setting targetSetting, string category)
+        {
+            switch (category)
+            {
+                case "Part counter":
+                    return IsUnsetColor(targetSetting.other.PanelTextFontSettings.PartCounter.Color)
+                        ? targetSetting.ColorScheme.PartCounter_ForeColor
+                        : targetSetting.other.PanelTextFontSettings.PartCounter.Color;
+                case "Folder":
+                    return IsUnsetColor(targetSetting.other.PanelTextFontSettings.Folder.Color)
+                        ? targetSetting.ColorScheme.FolderTree_ForeColor
+                        : targetSetting.other.PanelTextFontSettings.Folder.Color;
+                case "Error list":
+                    return IsUnsetColor(targetSetting.other.PanelTextFontSettings.ErrorList.Color)
+                        ? targetSetting.ColorScheme.ErrorList_ForeColor
+                        : targetSetting.other.PanelTextFontSettings.ErrorList.Color;
+                case "Log":
+                    return IsUnsetColor(targetSetting.other.PanelTextFontSettings.Log.Color)
+                        ? targetSetting.ColorScheme.Log_ForeColor
+                        : targetSetting.other.PanelTextFontSettings.Log.Color;
+                case "Editor":
+                    return targetSetting.ColorScheme.Azuki_ForeColor;
+                default:
+                    return SystemColors.ControlText.ToArgb();
+            }
+        }
+
+        private Color GetCategoryTextColor(string category)
+        {
+            if (categoryTextColorValues.TryGetValue(category, out int colorArgb))
+            {
+                return Color.FromArgb(colorArgb);
+            }
+
+            return Color.FromArgb(ResolveCategoryTextColorArgb(setting, category));
+        }
+
+        private Color GetCategoryBackgroundColor(string category)
+        {
+            switch (category)
+            {
+                case "Editor":
+                    return Color.FromArgb(setting.ColorScheme.Azuki_BackColor);
+                case "Part counter":
+                    return Color.FromArgb(GetCommonPanelBackColorArgb(setting.ColorScheme.PartCounter_BackColor));
+                case "Folder":
+                    return Color.FromArgb(GetCommonPanelBackColorArgb(setting.ColorScheme.FolderTree_BackColor));
+                case "Error list":
+                    return Color.FromArgb(GetCommonPanelBackColorArgb(setting.ColorScheme.ErrorList_BackColor));
+                case "Log":
+                    return Color.FromArgb(GetCommonPanelBackColorArgb(setting.ColorScheme.Log_BackColor));
+                default:
+                    return SystemColors.Window;
+            }
+        }
+
+        private int GetCommonPanelBackColorArgb(int fallbackColor)
+        {
+            return IsUnsetColor(selectedCommonPanelBackColor)
+                ? fallbackColor
+                : selectedCommonPanelBackColor;
+        }
+
+        private void UpdateCommonPanelBackgroundButton()
+        {
+            if (IsUnsetColor(selectedCommonPanelBackColor))
+            {
+                btnCommonBackColorSelect.Text = "未設定";
+                btnCommonBackColorSelect.BackColor = SystemColors.Control;
+                btnCommonBackColorSelect.ForeColor = SystemColors.ControlText;
+                return;
+            }
+
+            Color color = Color.FromArgb(selectedCommonPanelBackColor);
+            btnCommonBackColorSelect.Text = $"#{color.R:X2}{color.G:X2}{color.B:X2}";
+            btnCommonBackColorSelect.BackColor = color;
+            btnCommonBackColorSelect.ForeColor = color.GetBrightness() > 0.6f ? Color.Black : Color.White;
+        }
+
+        private void UpdateColorSampleButton(Color color, bool enabled)
+        {
+            if (!enabled)
+            {
+                btnTextColorSelect.Text = "色...";
+                btnTextColorSelect.BackColor = SystemColors.Control;
+                btnTextColorSelect.ForeColor = SystemColors.ControlText;
+                return;
+            }
+
+            btnTextColorSelect.Text = $"#{color.R:X2}{color.G:X2}{color.B:X2}";
+            btnTextColorSelect.BackColor = color;
+            btnTextColorSelect.ForeColor = color.GetBrightness() > 0.6f ? Color.Black : Color.White;
         }
 
         protected override void OnFormClosed(FormClosedEventArgs e)

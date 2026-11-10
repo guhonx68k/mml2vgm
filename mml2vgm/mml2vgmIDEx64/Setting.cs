@@ -1831,6 +1831,65 @@ namespace mml2vgmIDEx64
         }
 
         [Serializable]
+        public class PanelTextFontSettings
+        {
+            [Serializable]
+            public class PanelTextFontSetting
+            {
+                public string Name { get; set; }
+                public float Size { get; set; }
+                public FontStyle Style { get; set; }
+                public int Color { get; set; }
+
+                public PanelTextFontSetting()
+                {
+                    Name = "Consolas";
+                    Size = 9.0f;
+                    Style = FontStyle.Regular;
+                    Color = 0;
+                }
+
+                public PanelTextFontSetting Copy()
+                {
+                    return new PanelTextFontSetting
+                    {
+                        Name = Name,
+                        Size = Size,
+                        Style = Style,
+                        Color = Color
+                    };
+                }
+            }
+
+            public PanelTextFontSetting Editor { get; set; }
+            public PanelTextFontSetting PartCounter { get; set; }
+            public PanelTextFontSetting Folder { get; set; }
+            public PanelTextFontSetting ErrorList { get; set; }
+            public PanelTextFontSetting Log { get; set; }
+
+            public PanelTextFontSettings()
+            {
+                Editor = new PanelTextFontSetting { Name = "Consolas", Size = 12.0f, Style = FontStyle.Regular, Color = 0 };
+                PartCounter = new PanelTextFontSetting { Name = "MS UI Gothic", Size = 9.0f, Style = FontStyle.Regular, Color = 0 };
+                Folder = new PanelTextFontSetting { Name = "MS UI Gothic", Size = 9.0f, Style = FontStyle.Regular, Color = 0 };
+                ErrorList = new PanelTextFontSetting { Name = "Consolas", Size = 9.0f, Style = FontStyle.Regular, Color = 0 };
+                Log = new PanelTextFontSetting { Name = "Consolas", Size = 9.0f, Style = FontStyle.Regular, Color = 0 };
+            }
+
+            public PanelTextFontSettings Copy()
+            {
+                return new PanelTextFontSettings
+                {
+                    Editor = Editor?.Copy() ?? new PanelTextFontSetting { Name = "Consolas", Size = 12.0f, Style = FontStyle.Regular, Color = 0 },
+                    PartCounter = PartCounter?.Copy() ?? new PanelTextFontSetting { Name = "MS UI Gothic", Size = 9.0f, Style = FontStyle.Regular, Color = 0 },
+                    Folder = Folder?.Copy() ?? new PanelTextFontSetting { Name = "MS UI Gothic", Size = 9.0f, Style = FontStyle.Regular, Color = 0 },
+                    ErrorList = ErrorList?.Copy() ?? new PanelTextFontSetting { Name = "Consolas", Size = 9.0f, Style = FontStyle.Regular, Color = 0 },
+                    Log = Log?.Copy() ?? new PanelTextFontSetting { Name = "Consolas", Size = 9.0f, Style = FontStyle.Regular, Color = 0 }
+                };
+            }
+        }
+
+        [Serializable]
         public class Other
         {
             private bool _UseLoopTimes = true;
@@ -2048,40 +2107,50 @@ namespace mml2vgmIDEx64
                     _Opacity = Common.Range(_Opacity, 10, 100);
                 }
             }
-            private string _TextFontName = "Consolas";
-            public string TextFontName { get => _TextFontName; set => _TextFontName = value; }
-            private float _TextFontSize = 12.0f;
-            public float TextFontSize { get => _TextFontSize; set => _TextFontSize = value; }
-            private FontStyle _TextFontStyle = FontStyle.Regular;
-            public FontStyle TextFontStyle { get => _TextFontStyle; set => _TextFontStyle = value; }
+            private PanelTextFontSettings _PanelTextFontSettings = new PanelTextFontSettings();
+            public PanelTextFontSettings PanelTextFontSettings
+            {
+                get
+                {
+                    if (_PanelTextFontSettings == null) _PanelTextFontSettings = new PanelTextFontSettings();
+                    if (_PanelTextFontSettings.Editor == null) _PanelTextFontSettings.Editor = new PanelTextFontSettings.PanelTextFontSetting { Name = "Consolas", Size = 12.0f, Style = FontStyle.Regular, Color = 0 };
+                    if (_PanelTextFontSettings.PartCounter == null) _PanelTextFontSettings.PartCounter = new PanelTextFontSettings.PanelTextFontSetting { Name = "MS UI Gothic", Size = 9.0f, Style = FontStyle.Regular, Color = 0 };
+                    if (_PanelTextFontSettings.Folder == null) _PanelTextFontSettings.Folder = new PanelTextFontSettings.PanelTextFontSetting { Name = "MS UI Gothic", Size = 9.0f, Style = FontStyle.Regular, Color = 0 };
+                    if (_PanelTextFontSettings.ErrorList == null) _PanelTextFontSettings.ErrorList = new PanelTextFontSettings.PanelTextFontSetting { Name = "Consolas", Size = 9.0f, Style = FontStyle.Regular, Color = 0 };
+                    if (_PanelTextFontSettings.Log == null) _PanelTextFontSettings.Log = new PanelTextFontSettings.PanelTextFontSetting { Name = "Consolas", Size = 9.0f, Style = FontStyle.Regular, Color = 0 };
+                    return _PanelTextFontSettings;
+                }
+                set
+                {
+                    _PanelTextFontSettings = value ?? new PanelTextFontSettings();
+                }
+            }
 
-            private string _PartCounterTextFontName = "MS UI Gothic";
-            public string PartCounterTextFontName { get => _PartCounterTextFontName; set => _PartCounterTextFontName = value; }
-            private float _PartCounterTextFontSize = 9.0f;
-            public float PartCounterTextFontSize { get => _PartCounterTextFontSize; set => _PartCounterTextFontSize = value; }
-            private FontStyle _PartCounterTextFontStyle = FontStyle.Regular;
-            public FontStyle PartCounterTextFontStyle { get => _PartCounterTextFontStyle; set => _PartCounterTextFontStyle = value; }
+            public string TextFontName { get => PanelTextFontSettings.Editor.Name; set => PanelTextFontSettings.Editor.Name = value; }
+            public float TextFontSize { get => PanelTextFontSettings.Editor.Size; set => PanelTextFontSettings.Editor.Size = value; }
+            public FontStyle TextFontStyle { get => PanelTextFontSettings.Editor.Style; set => PanelTextFontSettings.Editor.Style = value; }
 
-            private string _FolderTextFontName = "MS UI Gothic";
-            public string FolderTextFontName { get => _FolderTextFontName; set => _FolderTextFontName = value; }
-            private float _FolderTextFontSize = 9.0f;
-            public float FolderTextFontSize { get => _FolderTextFontSize; set => _FolderTextFontSize = value; }
-            private FontStyle _FolderTextFontStyle = FontStyle.Regular;
-            public FontStyle FolderTextFontStyle { get => _FolderTextFontStyle; set => _FolderTextFontStyle = value; }
+            public string PartCounterTextFontName { get => PanelTextFontSettings.PartCounter.Name; set => PanelTextFontSettings.PartCounter.Name = value; }
+            public float PartCounterTextFontSize { get => PanelTextFontSettings.PartCounter.Size; set => PanelTextFontSettings.PartCounter.Size = value; }
+            public FontStyle PartCounterTextFontStyle { get => PanelTextFontSettings.PartCounter.Style; set => PanelTextFontSettings.PartCounter.Style = value; }
+            public int PartCounterTextColor { get => PanelTextFontSettings.PartCounter.Color; set => PanelTextFontSettings.PartCounter.Color = value; }
 
-            private string _ErrorListTextFontName = "Consolas";
-            public string ErrorListTextFontName { get => _ErrorListTextFontName; set => _ErrorListTextFontName = value; }
-            private float _ErrorListTextFontSize = 9.0f;
-            public float ErrorListTextFontSize { get => _ErrorListTextFontSize; set => _ErrorListTextFontSize = value; }
-            private FontStyle _ErrorListTextFontStyle = FontStyle.Regular;
-            public FontStyle ErrorListTextFontStyle { get => _ErrorListTextFontStyle; set => _ErrorListTextFontStyle = value; }
+            public string FolderTextFontName { get => PanelTextFontSettings.Folder.Name; set => PanelTextFontSettings.Folder.Name = value; }
+            public float FolderTextFontSize { get => PanelTextFontSettings.Folder.Size; set => PanelTextFontSettings.Folder.Size = value; }
+            public FontStyle FolderTextFontStyle { get => PanelTextFontSettings.Folder.Style; set => PanelTextFontSettings.Folder.Style = value; }
+            public int FolderTextColor { get => PanelTextFontSettings.Folder.Color; set => PanelTextFontSettings.Folder.Color = value; }
 
-            private string _LogTextFontName = "Consolas";
-            public string LogTextFontName { get => _LogTextFontName; set => _LogTextFontName = value; }
-            private float _LogTextFontSize = 9.0f;
-            public float LogTextFontSize { get => _LogTextFontSize; set => _LogTextFontSize = value; }
-            private FontStyle _LogTextFontStyle = FontStyle.Regular;
-            public FontStyle LogTextFontStyle { get => _LogTextFontStyle; set => _LogTextFontStyle = value; }
+            public string ErrorListTextFontName { get => PanelTextFontSettings.ErrorList.Name; set => PanelTextFontSettings.ErrorList.Name = value; }
+            public float ErrorListTextFontSize { get => PanelTextFontSettings.ErrorList.Size; set => PanelTextFontSettings.ErrorList.Size = value; }
+            public FontStyle ErrorListTextFontStyle { get => PanelTextFontSettings.ErrorList.Style; set => PanelTextFontSettings.ErrorList.Style = value; }
+            public int ErrorListTextColor { get => PanelTextFontSettings.ErrorList.Color; set => PanelTextFontSettings.ErrorList.Color = value; }
+
+            public string LogTextFontName { get => PanelTextFontSettings.Log.Name; set => PanelTextFontSettings.Log.Name = value; }
+            public float LogTextFontSize { get => PanelTextFontSettings.Log.Size; set => PanelTextFontSettings.Log.Size = value; }
+            public FontStyle LogTextFontStyle { get => PanelTextFontSettings.Log.Style; set => PanelTextFontSettings.Log.Style = value; }
+            public int LogTextColor { get => PanelTextFontSettings.Log.Color; set => PanelTextFontSettings.Log.Color = value; }
+            private int _CommonPanelBackColor = 0;
+            public int CommonPanelBackColor { get => _CommonPanelBackColor; set => _CommonPanelBackColor = value; }
             private int _ScrollBarTheme = 1;
             public int ScrollBarTheme { get => _ScrollBarTheme; set => _ScrollBarTheme = value; }
             public int TabWidth { get => _TabWidth; set => _TabWidth = value; }
@@ -2159,21 +2228,8 @@ namespace mml2vgmIDEx64
                 other.EmptyPlayList = this.EmptyPlayList;
                 other.ChangeEnterCode = this.ChangeEnterCode;
                 other.Opacity = this.Opacity;
-                other.TextFontName = this.TextFontName;
-                other.TextFontSize = this.TextFontSize;
-                other.TextFontStyle = this.TextFontStyle;
-                other.PartCounterTextFontName = this.PartCounterTextFontName;
-                other.PartCounterTextFontSize = this.PartCounterTextFontSize;
-                other.PartCounterTextFontStyle = this.PartCounterTextFontStyle;
-                other.FolderTextFontName = this.FolderTextFontName;
-                other.FolderTextFontSize = this.FolderTextFontSize;
-                other.FolderTextFontStyle = this.FolderTextFontStyle;
-                other.ErrorListTextFontName = this.ErrorListTextFontName;
-                other.ErrorListTextFontSize = this.ErrorListTextFontSize;
-                other.ErrorListTextFontStyle = this.ErrorListTextFontStyle;
-                other.LogTextFontName = this.LogTextFontName;
-                other.LogTextFontSize = this.LogTextFontSize;
-                other.LogTextFontStyle = this.LogTextFontStyle;
+                other.PanelTextFontSettings = this.PanelTextFontSettings?.Copy() ?? new PanelTextFontSettings();
+                other.CommonPanelBackColor = this.CommonPanelBackColor;
                 other.ScrollBarTheme = this.ScrollBarTheme;
                 other.GwiFileHistory = this.GwiFileHistory;
                 other.OpenedEditorFiles = this.OpenedEditorFiles;

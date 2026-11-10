@@ -21,13 +21,8 @@ namespace mml2vgmIDEx64
         public FrmFolderTree(Setting setting, DockPanel dockPanel)
         {
             InitializeComponent();
-            this.tvFolderTree.BackColor = Color.FromArgb(setting.ColorScheme.FolderTree_BackColor);
-            this.tvFolderTree.ForeColor = Color.FromArgb(setting.ColorScheme.FolderTree_ForeColor);
-            this.tvFolderTree.HotColor = Color.FromArgb(setting.ColorScheme.FolderTree_BackColor);
-            this.tvFolderTree.HotColor = Color.FromArgb(
-                (int)(tvFolderTree.HotColor.R * 1.3),
-                (int)(tvFolderTree.HotColor.G * 1.3),
-                (int)(tvFolderTree.HotColor.B * 1.3));
+            this.tvFolderTree.ForeColor = ResolveTextColor(setting.other.PanelTextFontSettings.Folder.Color, setting.ColorScheme.FolderTree_ForeColor);
+            ApplyBackgroundSetting(setting);
 
             tvFolderTree.TreeViewNodeSorter = new NodeSorter();
 
@@ -35,20 +30,51 @@ namespace mml2vgmIDEx64
             dockPanel.Theme.ApplyTo(toolStrip1);
 
             Common.SetDoubleBuffered(tvFolderTree);
-            ApplyFontSetting(setting);
+            ApplyFontSetting(setting.other.PanelTextFontSettings.Folder);
             ApplyScrollBarTheme(setting);
         }
 
-        public void ApplyFontSetting(Setting setting)
+        public void ApplyBackgroundSetting(Setting setting)
+        {
+            Color backColor = ResolvePanelBackColor(setting, setting.ColorScheme.FolderTree_BackColor);
+            this.BackColor = backColor;
+            tvFolderTree.BackColor = backColor;
+            tvFolderTree.HotColor = Color.FromArgb(
+                Math.Min(255, (int)(backColor.R * 1.3f)),
+                Math.Min(255, (int)(backColor.G * 1.3f)),
+                Math.Min(255, (int)(backColor.B * 1.3f)));
+        }
+
+        public void ApplyFontSetting(Setting.PanelTextFontSettings.PanelTextFontSetting panelTextFontSetting)
         {
             try
             {
-                tvFolderTree.Font = new Font(setting.other.FolderTextFontName, setting.other.FolderTextFontSize, setting.other.FolderTextFontStyle);
+                tvFolderTree.Font = new Font(
+                    panelTextFontSetting.Name,
+                    panelTextFontSetting.Size,
+                    panelTextFontSetting.Style);
             }
             catch
             {
                 tvFolderTree.Font = new Font("MS UI Gothic", 9.0f, FontStyle.Regular);
             }
+
+            tvFolderTree.ForeColor = ResolveTextColor(panelTextFontSetting.Color, Color.FromArgb(235, 235, 255).ToArgb());
+        }
+
+        private static Color ResolveTextColor(int otherTextColor, int fallbackColor)
+        {
+            return otherTextColor == Color.Empty.ToArgb() || otherTextColor == 0
+                ? Color.FromArgb(fallbackColor)
+                : Color.FromArgb(otherTextColor);
+        }
+
+        private static Color ResolvePanelBackColor(Setting setting, int fallbackColor)
+        {
+            int commonBackColor = setting?.other?.CommonPanelBackColor ?? 0;
+            return commonBackColor == Color.Empty.ToArgb() || commonBackColor == 0
+                ? Color.FromArgb(fallbackColor)
+                : Color.FromArgb(commonBackColor);
         }
 
         public void ApplyScrollBarTheme(Setting setting)

@@ -22,7 +22,7 @@ namespace mml2vgmIDEx64
         public FrmLyrics(Setting setting, ThemeBase theme)
         {
             InitializeComponent();
-            rtbLyrics.BackColor = Color.FromArgb(setting.ColorScheme.Log_BackColor);
+            ApplyBackgroundSetting(setting);
             rtbLyrics.ForeColor = Color.FromArgb(setting.ColorScheme.Log_ForeColor);
             culColor = Color.FromArgb(setting.ColorScheme.Log_ForeColor);
 
@@ -31,6 +31,21 @@ namespace mml2vgmIDEx64
 
             Common.SetDoubleBuffered(rtbLyrics);
 
+        }
+
+        public void ApplyBackgroundSetting(Setting setting)
+        {
+            Color backColor = ResolvePanelBackColor(setting, setting.ColorScheme.Log_BackColor);
+            this.BackColor = backColor;
+            rtbLyrics.BackColor = backColor;
+        }
+
+        private static Color ResolvePanelBackColor(Setting setting, int fallbackColor)
+        {
+            int commonBackColor = setting?.other?.CommonPanelBackColor ?? 0;
+            return commonBackColor == Color.Empty.ToArgb() || commonBackColor == 0
+                ? Color.FromArgb(fallbackColor)
+                : Color.FromArgb(commonBackColor);
         }
 
         protected override string GetPersistString()

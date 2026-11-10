@@ -69,8 +69,7 @@ namespace mml2vgmIDEx64
             this.setting = setting;
             comparer=new PartRowComparer(SortOrder.Ascending);
 
-            dgvPartCounter.BackgroundColor = Color.FromArgb(setting.ColorScheme.PartCounter_BackColor);
-            dgvPartCounter.DefaultCellStyle.BackColor = Color.FromArgb(setting.ColorScheme.PartCounter_BackColor);
+            ApplyBackgroundSetting(setting);
             //dgvPartCounter.DefaultCellStyle.SelectionBackColor = Color.Empty;
             dgvPartCounter.ForeColor = Color.FromArgb(setting.ColorScheme.PartCounter_ForeColor);
             EnableDoubleBuffering(dgvPartCounter);
@@ -89,7 +88,7 @@ namespace mml2vgmIDEx64
                     ) c.Visible = false;
             }
 
-            ApplyFontSetting(setting);
+            ApplyFontSetting(setting.other.PanelTextFontSettings.PartCounter);
             ApplyScrollBarTheme(setting);
 
             double r = 0;
@@ -261,12 +260,15 @@ namespace mml2vgmIDEx64
             }
         }
 
-        public void ApplyFontSetting(Setting setting)
+        public void ApplyFontSetting(Setting.PanelTextFontSettings.PanelTextFontSetting panelTextFontSetting)
         {
             Font font;
             try
             {
-                font = new Font(setting.other.PartCounterTextFontName, setting.other.PartCounterTextFontSize, setting.other.PartCounterTextFontStyle);
+                font = new Font(
+                    panelTextFontSetting.Name,
+                    panelTextFontSetting.Size,
+                    panelTextFontSetting.Style);
             }
             catch
             {
@@ -276,6 +278,56 @@ namespace mml2vgmIDEx64
             dgvPartCounter.DefaultCellStyle.Font = font;
             dgvPartCounter.RowsDefaultCellStyle.Font = font;
             dgvPartCounter.RowTemplate.DefaultCellStyle.Font = font;
+            Color textColor = ResolveTextColor(panelTextFontSetting.Color, Color.FromArgb(235, 235, 255).ToArgb());
+            dgvPartCounter.ForeColor = textColor;
+            dgvPartCounter.DefaultCellStyle.ForeColor = textColor;
+            dgvPartCounter.RowsDefaultCellStyle.ForeColor = textColor;
+            dgvPartCounter.RowTemplate.DefaultCellStyle.ForeColor = textColor;
+        }
+
+        public void ApplyBackgroundSetting(Setting setting)
+        {
+            this.setting = setting;
+            Color backColor = ResolvePanelBackColor(setting, setting.ColorScheme.PartCounter_BackColor);
+            this.BackColor = backColor;
+            dgvPartCounter.BackgroundColor = backColor;
+            dgvPartCounter.DefaultCellStyle.BackColor = backColor;
+            dgvPartCounter.RowsDefaultCellStyle.BackColor = backColor;
+            dgvPartCounter.AlternatingRowsDefaultCellStyle.BackColor = backColor;
+            dgvPartCounter.RowTemplate.DefaultCellStyle.BackColor = backColor;
+
+            foreach (DataGridViewColumn column in dgvPartCounter.Columns)
+            {
+                column.DefaultCellStyle.BackColor = backColor;
+            }
+
+            foreach (DataGridViewRow row in dgvPartCounter.Rows)
+            {
+                foreach (DataGridViewCell cell in row.Cells)
+                {
+                    cell.Style.BackColor = backColor;
+                }
+            }
+
+            if (dgvPartCounter.Rows.Count > 0)
+            {
+                refreshMuteSolo();
+            }
+        }
+
+        private static Color ResolvePanelBackColor(Setting setting, int fallbackColor)
+        {
+            int commonBackColor = setting?.other?.CommonPanelBackColor ?? 0;
+            return commonBackColor == Color.Empty.ToArgb() || commonBackColor == 0
+                ? Color.FromArgb(fallbackColor)
+                : Color.FromArgb(commonBackColor);
+        }
+
+        private static Color ResolveTextColor(int otherTextColor, int fallbackColor)
+        {
+            return otherTextColor == Color.Empty.ToArgb() || otherTextColor == 0
+                ? Color.FromArgb(fallbackColor)
+                : Color.FromArgb(otherTextColor);
         }
 
         public void ApplyScrollBarTheme(Setting setting)
@@ -939,14 +991,18 @@ namespace mml2vgmIDEx64
                         }
                         else
                         {
-                            cell.Style.BackColor = Color.FromArgb(setting.ColorScheme.PartCounter_BackColor);
+                            cell.Style.BackColor = ResolvePanelBackColor(setting, setting.ColorScheme.PartCounter_BackColor);
                         }
                     }
                 }
                 row.Cells[dgvPartCounter.Columns["ClmSolo"].Index].Value = ms.solo ? "S" : "";
-                row.Cells[dgvPartCounter.Columns["ClmSolo"].Index].Style.BackColor = ms.solo ? Color.FromArgb(setting.ColorScheme.PartCounter_SOLO_BackColor) : Color.Empty;
+                row.Cells[dgvPartCounter.Columns["ClmSolo"].Index].Style.BackColor = ms.solo
+                    ? Color.FromArgb(setting.ColorScheme.PartCounter_SOLO_BackColor)
+                    : ResolvePanelBackColor(setting, setting.ColorScheme.PartCounter_BackColor);
                 row.Cells[dgvPartCounter.Columns["ClmMute"].Index].Value = ms.mute ? "M" : "";
-                row.Cells[dgvPartCounter.Columns["ClmMute"].Index].Style.BackColor = ms.mute ? Color.FromArgb(setting.ColorScheme.PartCounter_MUTE_BackColor) : Color.Empty;
+                row.Cells[dgvPartCounter.Columns["ClmMute"].Index].Style.BackColor = ms.mute
+                    ? Color.FromArgb(setting.ColorScheme.PartCounter_MUTE_BackColor)
+                    : ResolvePanelBackColor(setting, setting.ColorScheme.PartCounter_BackColor);
                 SetMute(row);
             }
         }

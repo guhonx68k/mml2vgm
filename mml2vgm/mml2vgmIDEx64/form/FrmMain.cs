@@ -3503,7 +3503,11 @@ namespace mml2vgmIDEx64
                     MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(setting.dockingState));
                     dpMain.LoadFromXml(stream, new DeserializeDockContent(GetDockContentFromPersistString));
 
-                    ShowDefaultDockContents();
+                    bool hasRestoredContents = HasRestoredDockContents();
+                    if (!hasRestoredContents)
+                    {
+                        ShowDefaultDockContents();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -3527,14 +3531,50 @@ namespace mml2vgmIDEx64
 
         }
 
+        private bool HasRestoredDockContents()
+        {
+            if (dpMain != null)
+            {
+                foreach (IDockContent content in dpMain.Contents)
+                {
+                    if (content != null) return true;
+                }
+            }
+
+            return frmPartCounter.ParentForm != null
+                || frmLog.ParentForm != null
+                || frmFolderTree.ParentForm != null
+                || frmErrorList.ParentForm != null
+                || frmLyrics.ParentForm != null
+                || frmSien.ParentForm != null;
+        }
+
         private void ShowDefaultDockContents()
         {
-            if (frmPartCounter.ParentForm == null) frmPartCounter.Show(dpMain, DockState.DockLeft);
-            if (frmLog.ParentForm == null) frmLog.Show(dpMain, DockState.DockBottom);
-            if (frmFolderTree.ParentForm == null) frmFolderTree.Show(dpMain, DockState.DockLeft);
-            if (frmErrorList.ParentForm == null) frmErrorList.Show(dpMain, DockState.DockBottom);
-            if (frmLyrics.ParentForm == null) frmLyrics.Show(dpMain, DockState.DockTop);
-            if (frmSien.ParentForm == null) frmSien.Show(dpMain, DockState.DockRight);
+            if (frmPartCounter.ParentForm == null)
+            {
+                frmPartCounter.Show(dpMain, DockState.DockLeft);
+            }
+            if (frmLog.ParentForm == null)
+            {
+                frmLog.Show(dpMain, DockState.DockBottom);
+            }
+            if (frmFolderTree.ParentForm == null)
+            {
+                frmFolderTree.Show(dpMain, DockState.DockLeft);
+            }
+            if (frmErrorList.ParentForm == null)
+            {
+                frmErrorList.Show(dpMain, DockState.DockBottom);
+            }
+            if (frmLyrics.ParentForm == null)
+            {
+                frmLyrics.Show(dpMain, DockState.DockTop);
+            }
+            if (frmSien.ParentForm == null)
+            {
+                frmSien.Show(dpMain, DockState.DockRight);
+            }
         }
 
         private void InvalidateDockingStateAfterRestoreFailure()
@@ -3669,16 +3709,26 @@ namespace mml2vgmIDEx64
             foreach (var dc in dpMain.Documents)
             {
                 FrmEditor editor = (FrmEditor)dc;
-                editor.azukiControl.Font = new Font(setting.other.TextFontName, setting.other.TextFontSize, setting.other.TextFontStyle);
+                editor.ApplyBackgroundSetting(setting);
+                editor.azukiControl.Font = new Font(
+                    setting.other.PanelTextFontSettings.Editor.Name,
+                    setting.other.PanelTextFontSettings.Editor.Size,
+                    setting.other.PanelTextFontSettings.Editor.Style);
                 editor.ApplyScrollBarTheme(setting);
             }
 
 
             this.setting = setting;
-            frmPartCounter?.ApplyFontSetting(setting);
-            frmFolderTree?.ApplyFontSetting(setting);
-            frmErrorList?.ApplyFontSetting(setting);
-            frmLog?.ApplyFontSetting(setting);
+            frmPartCounter?.ApplyBackgroundSetting(setting);
+            frmFolderTree?.ApplyBackgroundSetting(setting);
+            frmErrorList?.ApplyBackgroundSetting(setting);
+            frmLog?.ApplyBackgroundSetting(setting);
+            frmLyrics?.ApplyBackgroundSetting(setting);
+            frmSien?.ApplyBackgroundSetting(setting);
+            frmPartCounter?.ApplyFontSetting(setting.other.PanelTextFontSettings.PartCounter);
+            frmFolderTree?.ApplyFontSetting(setting.other.PanelTextFontSettings.Folder);
+            frmErrorList?.ApplyFontSetting(setting.other.PanelTextFontSettings.ErrorList);
+            frmLog?.ApplyFontSetting(setting.other.PanelTextFontSettings.Log);
             frmPartCounter?.ApplyScrollBarTheme(setting);
             frmFolderTree?.ApplyScrollBarTheme(setting);
             frmErrorList?.ApplyScrollBarTheme(setting);

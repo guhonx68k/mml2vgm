@@ -12,21 +12,23 @@ namespace mml2vgmIDEx64
         public FrmErrorList(Setting setting)
         {
             InitializeComponent();
-            this.dataGridView1.BackgroundColor = Color.FromArgb(setting.ColorScheme.ErrorList_BackColor);
-            this.dataGridView1.DefaultCellStyle.BackColor = Color.FromArgb(setting.ColorScheme.ErrorList_BackColor);
-            this.dataGridView1.ForeColor = Color.FromArgb(setting.ColorScheme.ErrorList_ForeColor);
-            ApplyFontSetting(setting);
+            ApplyBackgroundSetting(setting);
+            this.dataGridView1.ForeColor = ResolveTextColor(setting.other.PanelTextFontSettings.ErrorList.Color, setting.ColorScheme.ErrorList_ForeColor);
+            ApplyFontSetting(setting.other.PanelTextFontSettings.ErrorList);
             ApplyScrollBarTheme(setting);
 
             Common.SetDoubleBuffered(dataGridView1);
         }
 
-        public void ApplyFontSetting(Setting setting)
+        public void ApplyFontSetting(Setting.PanelTextFontSettings.PanelTextFontSetting panelTextFontSetting)
         {
             Font font;
             try
             {
-                font = new Font(setting.other.ErrorListTextFontName, setting.other.ErrorListTextFontSize, setting.other.ErrorListTextFontStyle);
+                font = new Font(
+                    panelTextFontSetting.Name,
+                    panelTextFontSetting.Size,
+                    panelTextFontSetting.Style);
             }
             catch
             {
@@ -36,6 +38,50 @@ namespace mml2vgmIDEx64
             dataGridView1.DefaultCellStyle.Font = font;
             dataGridView1.RowsDefaultCellStyle.Font = font;
             dataGridView1.RowTemplate.DefaultCellStyle.Font = font;
+            Color textColor = ResolveTextColor(panelTextFontSetting.Color, Color.FromArgb(235, 235, 255).ToArgb());
+            dataGridView1.ForeColor = textColor;
+            dataGridView1.DefaultCellStyle.ForeColor = textColor;
+            dataGridView1.RowsDefaultCellStyle.ForeColor = textColor;
+            dataGridView1.RowTemplate.DefaultCellStyle.ForeColor = textColor;
+        }
+
+        public void ApplyBackgroundSetting(Setting setting)
+        {
+            Color backColor = ResolvePanelBackColor(setting, setting.ColorScheme.ErrorList_BackColor);
+            this.BackColor = backColor;
+            dataGridView1.BackgroundColor = backColor;
+            dataGridView1.DefaultCellStyle.BackColor = backColor;
+            dataGridView1.RowsDefaultCellStyle.BackColor = backColor;
+            dataGridView1.AlternatingRowsDefaultCellStyle.BackColor = backColor;
+            dataGridView1.RowTemplate.DefaultCellStyle.BackColor = backColor;
+
+            foreach (DataGridViewColumn column in dataGridView1.Columns)
+            {
+                column.DefaultCellStyle.BackColor = backColor;
+            }
+
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                foreach (DataGridViewCell cell in row.Cells)
+                {
+                    cell.Style.BackColor = backColor;
+                }
+            }
+        }
+
+        private static Color ResolveTextColor(int otherTextColor, int fallbackColor)
+        {
+            return otherTextColor == Color.Empty.ToArgb() || otherTextColor == 0
+                ? Color.FromArgb(fallbackColor)
+                : Color.FromArgb(otherTextColor);
+        }
+
+        private static Color ResolvePanelBackColor(Setting setting, int fallbackColor)
+        {
+            int commonBackColor = setting?.other?.CommonPanelBackColor ?? 0;
+            return commonBackColor == Color.Empty.ToArgb() || commonBackColor == 0
+                ? Color.FromArgb(fallbackColor)
+                : Color.FromArgb(commonBackColor);
         }
 
         public void ApplyScrollBarTheme(Setting setting)

@@ -83,7 +83,10 @@ namespace mml2vgmIDEx64
         private void setHighlighterCommon(IHighlighter highlighter)
         {
             azukiControl = new AzukiControl();
-            azukiControl.Font = new Font(setting.other.TextFontName, setting.other.TextFontSize, setting.other.TextFontStyle);
+            azukiControl.Font = new Font(
+                setting.other.PanelTextFontSettings.Editor.Name,
+                setting.other.PanelTextFontSettings.Editor.Size,
+                setting.other.PanelTextFontSettings.Editor.Style);
             azukiControl.Dock = DockStyle.Fill;
             azukiControl.ShowsIconBar = true;
             azukiControl.Highlighter = highlighter;
@@ -114,7 +117,7 @@ namespace mml2vgmIDEx64
             azukiControl.ShowsIconBar = setting.editor.showIconBar;
 
             azukiControl.ColorScheme.ForeColor = Color.FromArgb(setting.ColorScheme.Azuki_ForeColor);
-            azukiControl.ColorScheme.BackColor = Color.FromArgb(setting.ColorScheme.Azuki_BackColor);
+            ApplyBackgroundSetting(setting);
             azukiControl.ColorScheme.IconBarBack = Color.FromArgb(setting.ColorScheme.Azuki_IconBarBack);
             azukiControl.ColorScheme.LineNumberBack = Color.FromArgb(setting.ColorScheme.Azuki_LineNumberBack_Normal);
             azukiControl.ColorScheme.LineNumberFore = Color.FromArgb(setting.ColorScheme.Azuki_LineNumberFore_Normal);
@@ -148,9 +151,24 @@ namespace mml2vgmIDEx64
             this.Controls.Add(azukiControl);
         }
 
+        public void ApplyBackgroundSetting(Setting setting)
+        {
+            Color backColor = ResolvePanelBackColor(setting, setting.ColorScheme.Azuki_BackColor);
+            this.BackColor = backColor;
+            azukiControl.ColorScheme.BackColor = backColor;
+        }
+
         public void ApplyScrollBarTheme(Setting setting)
         {
             Common.ApplyScrollBarTheme(azukiControl, setting.other.ScrollBarTheme);
+        }
+
+        private static Color ResolvePanelBackColor(Setting setting, int fallbackColor)
+        {
+            int commonBackColor = setting?.other?.CommonPanelBackColor ?? 0;
+            return commonBackColor == Color.Empty.ToArgb() || commonBackColor == 0
+                ? Color.FromArgb(fallbackColor)
+                : Color.FromArgb(commonBackColor);
         }
 
         private IHighlighter setHighlighterVGMZGMZGM()

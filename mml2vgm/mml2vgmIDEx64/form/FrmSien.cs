@@ -31,9 +31,23 @@ namespace mml2vgmIDEx64
                 instCache = ConvertCacheList(setting.sien);
             }
 
-            this.BackColor = Color.FromArgb(setting.ColorScheme.Azuki_BackColor);
-            treeView1.BackColor = Color.FromArgb(setting.ColorScheme.Azuki_BackColor);
+            ApplyBackgroundSetting(setting);
             this.Opacity = setting.other.Opacity / 100.0;
+        }
+
+        public void ApplyBackgroundSetting(Setting setting)
+        {
+            Color backColor = ResolvePanelBackColor(setting, setting.ColorScheme.Azuki_BackColor);
+            this.BackColor = backColor;
+            treeView1.BackColor = backColor;
+        }
+
+        private static Color ResolvePanelBackColor(Setting setting, int fallbackColor)
+        {
+            int commonBackColor = setting?.other?.CommonPanelBackColor ?? 0;
+            return commonBackColor == Color.Empty.ToArgb() || commonBackColor == 0
+                ? Color.FromArgb(fallbackColor)
+                : Color.FromArgb(commonBackColor);
         }
 
         protected override string GetPersistString()

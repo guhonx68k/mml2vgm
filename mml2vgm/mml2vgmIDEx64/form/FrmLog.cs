@@ -12,9 +12,9 @@ namespace mml2vgmIDEx64
         public FrmLog(Setting setting, ThemeBase theme)
         {
             InitializeComponent();
-            this.tbLog.BackColor = Color.FromArgb(setting.ColorScheme.Log_BackColor);
-            this.tbLog.ForeColor = Color.FromArgb(setting.ColorScheme.Log_ForeColor);
-            ApplyFontSetting(setting);
+            ApplyBackgroundSetting(setting);
+            this.tbLog.ForeColor = ResolveTextColor(setting.other.PanelTextFontSettings.Log.Color, setting.ColorScheme.Log_ForeColor);
+            ApplyFontSetting(setting.other.PanelTextFontSettings.Log);
             ApplyScrollBarTheme(setting);
             theme.ApplyTo(toolStrip1);
 
@@ -22,16 +22,43 @@ namespace mml2vgmIDEx64
             Common.SetDoubleBuffered(tbLog);
         }
 
-        public void ApplyFontSetting(Setting setting)
+        public void ApplyFontSetting(Setting.PanelTextFontSettings.PanelTextFontSetting panelTextFontSetting)
         {
             try
             {
-                tbLog.Font = new Font(setting.other.LogTextFontName, setting.other.LogTextFontSize, setting.other.LogTextFontStyle);
+                tbLog.Font = new Font(
+                    panelTextFontSetting.Name,
+                    panelTextFontSetting.Size,
+                    panelTextFontSetting.Style);
             }
             catch
             {
                 tbLog.Font = new Font("Consolas", 9.0f, FontStyle.Regular);
             }
+
+            tbLog.ForeColor = ResolveTextColor(panelTextFontSetting.Color, Color.FromArgb(235, 235, 255).ToArgb());
+        }
+
+        public void ApplyBackgroundSetting(Setting setting)
+        {
+            Color backColor = ResolvePanelBackColor(setting, setting.ColorScheme.Log_BackColor);
+            this.BackColor = backColor;
+            tbLog.BackColor = backColor;
+        }
+
+        private static Color ResolveTextColor(int otherTextColor, int fallbackColor)
+        {
+            return otherTextColor == Color.Empty.ToArgb() || otherTextColor == 0
+                ? Color.FromArgb(fallbackColor)
+                : Color.FromArgb(otherTextColor);
+        }
+
+        private static Color ResolvePanelBackColor(Setting setting, int fallbackColor)
+        {
+            int commonBackColor = setting?.other?.CommonPanelBackColor ?? 0;
+            return commonBackColor == Color.Empty.ToArgb() || commonBackColor == 0
+                ? Color.FromArgb(fallbackColor)
+                : Color.FromArgb(commonBackColor);
         }
 
         public void ApplyScrollBarTheme(Setting setting)
