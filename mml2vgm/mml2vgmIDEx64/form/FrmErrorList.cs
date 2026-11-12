@@ -125,8 +125,8 @@ namespace mml2vgmIDEx64
         private void JumpDocument(int rowIndex, bool wantFocus)
         {
             if (rowIndex < 0 || rowIndex > dataGridView1.Rows.Count - 1) return;
-            string f = dataGridView1.Rows[rowIndex].Cells[1].Value.ToString();
-            string l = dataGridView1.Rows[rowIndex].Cells[2].Value.ToString();
+            string f = dataGridView1.Rows[rowIndex].Cells[2].Value.ToString();
+            string l = dataGridView1.Rows[rowIndex].Cells[3].Value.ToString();
             long n = 0;
 
             if (long.TryParse(l, out n))
@@ -137,6 +137,12 @@ namespace mml2vgmIDEx64
             {
                 parentJumpDocument?.Invoke("", -1, wantFocus);
             }
+        }
+
+        public void AddErrorRow(string level, string fileName, string line, string message)
+        {
+            int sequence = dataGridView1.Rows.Count + 1;
+            dataGridView1.Rows.Add(sequence.ToString(), level, fileName, line, message);
         }
 
         private void FrmErrorList_DragOver(object sender, DragEventArgs e)

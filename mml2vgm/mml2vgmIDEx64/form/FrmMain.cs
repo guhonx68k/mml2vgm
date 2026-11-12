@@ -2499,7 +2499,7 @@ namespace mml2vgmIDEx64
             foreach (msgInfo mes in msgBox.getErr())
             {
                 string srcFile = getMessageSourceFilePath(mes);
-                frmErrorList.dataGridView1.Rows.Add(
+                frmErrorList.AddErrorRow(
                     "Error",
                     srcFile,
                     mes.line == -1 ? "-" : (mes.line + 1).ToString(),
@@ -2511,7 +2511,7 @@ namespace mml2vgmIDEx64
             foreach (msgInfo mes in msgBox.getWrn())
             {
                 string srcFile = getMessageSourceFilePath(mes);
-                frmErrorList.dataGridView1.Rows.Add(
+                frmErrorList.AddErrorRow(
                     "Warning",
                     srcFile,
                     mes.line == -1 ? "-" : (mes.line + 1).ToString(),
@@ -2738,7 +2738,7 @@ namespace mml2vgmIDEx64
             if (ci != null)
                 foreach (Tuple<int, int, string> mes in ci.errorList)
                 {
-                    frmErrorList.dataGridView1.Rows.Add("Error", "-"
+                    frmErrorList.AddErrorRow("Error", "-"
                         , mes.Item1 == -1 ? "-" : (mes.Item1 + 1).ToString()
                         , mes.Item3);
                     msgInfo mi = new msgInfo(null, "", mes.Item1, mes.Item2, -1, mes.Item3);
@@ -2748,7 +2748,7 @@ namespace mml2vgmIDEx64
             if (ci != null)
                 foreach (Tuple<int, int, string> mes in ci.warningList)
                 {
-                    frmErrorList.dataGridView1.Rows.Add("Warning", "-"
+                    frmErrorList.AddErrorRow("Warning", "-"
                         , mes.Item1 == -1 ? "-" : (mes.Item1 + 1).ToString()
                         , mes.Item3);
                     msgInfo mi = new msgInfo(null, "", mes.Item1, mes.Item2, -1, mes.Item3);
@@ -2919,7 +2919,7 @@ namespace mml2vgmIDEx64
 
             foreach (Tuple<int, int, string> mes in ci.errorList)
             {
-                frmErrorList.dataGridView1.Rows.Add("Error", "-"
+                frmErrorList.AddErrorRow("Error", "-"
                     , mes.Item1 == -1 ? "-" : (mes.Item1 + 1).ToString()
                     , mes.Item3);
                 msgInfo mi = new msgInfo(null, "", mes.Item1, mes.Item2, -1, mes.Item3);
@@ -2928,7 +2928,7 @@ namespace mml2vgmIDEx64
 
             foreach (Tuple<int, int, string> mes in ci.warningList)
             {
-                frmErrorList.dataGridView1.Rows.Add("Warning", "-"
+                frmErrorList.AddErrorRow("Warning", "-"
                     , mes.Item1 == -1 ? "-" : (mes.Item1 + 1).ToString()
                     , mes.Item3);
                 msgInfo mi = new msgInfo(null, "", mes.Item1, mes.Item2, -1, mes.Item3);
@@ -3019,7 +3019,7 @@ namespace mml2vgmIDEx64
 
             foreach (Tuple<int, int, string> mes in ci.errorList)
             {
-                frmErrorList.dataGridView1.Rows.Add("Error", "-"
+                frmErrorList.AddErrorRow("Error", "-"
                     , mes.Item1 == -1 ? "-" : (mes.Item1 + 1).ToString()
                     , mes.Item3);
                 msgInfo mi = new msgInfo(null, "", mes.Item1, mes.Item2, -1, mes.Item3);
@@ -3028,7 +3028,7 @@ namespace mml2vgmIDEx64
 
             foreach (Tuple<int, int, string> mes in ci.warningList)
             {
-                frmErrorList.dataGridView1.Rows.Add("Warning", "-"
+                frmErrorList.AddErrorRow("Warning", "-"
                     , mes.Item1 == -1 ? "-" : (mes.Item1 + 1).ToString()
                     , mes.Item3);
                 msgInfo mi = new msgInfo(null, "", mes.Item1, mes.Item2, -1, mes.Item3);
@@ -3121,7 +3121,7 @@ namespace mml2vgmIDEx64
 
             foreach (Tuple<int, int, string> mes in ci.errorList)
             {
-                frmErrorList.dataGridView1.Rows.Add("Error", "-"
+                frmErrorList.AddErrorRow("Error", "-"
                     , mes.Item1 == -1 ? "-" : (mes.Item1 + 1).ToString()
                     , mes.Item3);
                 msgInfo mi = new msgInfo(null, "", mes.Item1, mes.Item2, -1, mes.Item3);
@@ -3130,7 +3130,7 @@ namespace mml2vgmIDEx64
 
             foreach (Tuple<int, int, string> mes in ci.warningList)
             {
-                frmErrorList.dataGridView1.Rows.Add("Warning", "-"
+                frmErrorList.AddErrorRow("Warning", "-"
                     , mes.Item1 == -1 ? "-" : (mes.Item1 + 1).ToString()
                     , mes.Item3);
                 msgInfo mi = new msgInfo(null, "", mes.Item1, mes.Item2, -1, mes.Item3);

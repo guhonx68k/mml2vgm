@@ -32,6 +32,7 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmErrorList));
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.ClmNo = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ClmEtype = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ClmFileName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ClmLine = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -55,6 +56,7 @@
             this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.ClmNo,
             this.ClmEtype,
             this.ClmFileName,
             this.ClmLine,
@@ -83,9 +85,17 @@
             this.dataGridView1.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.DataGridView1_CellMouseDoubleClick);
             this.dataGridView1.SelectionChanged += new System.EventHandler(this.DataGridView1_SelectionChanged);
             // 
+            // ClmNo
+            // 
+            this.ClmNo.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.ClmNo.HeaderText = "No.";
+            this.ClmNo.Name = "ClmNo";
+            this.ClmNo.ReadOnly = true;
+            this.ClmNo.Width = 48;
+            // 
             // ClmEtype
             // 
-            this.ClmEtype.HeaderText = "";
+            this.ClmEtype.HeaderText = "level";
             this.ClmEtype.Name = "ClmEtype";
             this.ClmEtype.ReadOnly = true;
             this.ClmEtype.Width = 80;
@@ -99,6 +109,7 @@
             // 
             // ClmLine
             // 
+            this.ClmLine.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
             this.ClmLine.HeaderText = "Line";
             this.ClmLine.Name = "ClmLine";
             this.ClmLine.ReadOnly = true;
@@ -133,6 +144,7 @@
 
         #endregion
         public System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ClmNo;
         private System.Windows.Forms.DataGridViewTextBoxColumn ClmEtype;
         private System.Windows.Forms.DataGridViewTextBoxColumn ClmFileName;
         private System.Windows.Forms.DataGridViewTextBoxColumn ClmLine;
