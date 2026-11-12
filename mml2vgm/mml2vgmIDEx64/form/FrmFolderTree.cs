@@ -17,6 +17,7 @@ namespace mml2vgmIDEx64
         public Action<string[]> parentDeleteFile = null;
         public string basePath = "";
         private bool useMouse;
+        private bool suppressAfterExpandFilter = false;
 
         public FrmFolderTree(Setting setting, DockPanel dockPanel)
         {
@@ -480,14 +481,104 @@ namespace mml2vgmIDEx64
         public void refresh()
         {
             if (string.IsNullOrEmpty(basePath)) return;
-            refreshRemoveCheck(tvFolderTree.Nodes);
-            if (tvFolderTree.Nodes.Count > 0)
+            HashSet<string> expandedFolders = GetExpandedFolders();
+            string selectedNodePath = tvFolderTree.SelectedNode?.FullPath;
+
+            tvFolderTree.BeginUpdate();
+            try
             {
-                refreshAddCheck(tvFolderTree.Nodes[0]);
-                refreshFilter(tvFolderTree.Nodes[0].Nodes);
+                refreshRemoveCheck(tvFolderTree.Nodes);
+                if (tvFolderTree.Nodes.Count > 0)
+                {
+                    refreshAddCheck(tvFolderTree.Nodes[0], true);
+                    refreshFilter(tvFolderTree.Nodes[0].Nodes);
+                }
+                tvFolderTree.Sort();
+                RestoreExpandedFolders(tvFolderTree.Nodes, expandedFolders);
+                RestoreSelectedNode(tvFolderTree.Nodes, selectedNodePath);
             }
-            tvFolderTree.Sort();
-            tvFolderTree.ExpandAll();
+            finally
+            {
+                tvFolderTree.EndUpdate();
+            }
+        }
+
+        private HashSet<string> GetExpandedFolders()
+        {
+            HashSet<string> expanded = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            CollectExpandedFolders(tvFolderTree.Nodes, expanded);
+            return expanded;
+        }
+
+        private void CollectExpandedFolders(TreeNodeCollection nodes, HashSet<string> expanded)
+        {
+            foreach (TreeNode tn in nodes)
+            {
+                if (tn.ImageIndex == 1 && tn.IsExpanded)
+                {
+                    expanded.Add(tn.FullPath);
+                }
+
+                if (tn.Nodes.Count > 0)
+                {
+                    CollectExpandedFolders(tn.Nodes, expanded);
+                }
+            }
+        }
+
+        private void RestoreExpandedFolders(TreeNodeCollection nodes, HashSet<string> expanded)
+        {
+            suppressAfterExpandFilter = true;
+            try
+            {
+                RestoreExpandedFoldersCore(nodes, expanded);
+            }
+            finally
+            {
+                suppressAfterExpandFilter = false;
+            }
+        }
+
+        private void RestoreExpandedFoldersCore(TreeNodeCollection nodes, HashSet<string> expanded)
+        {
+            foreach (TreeNode tn in nodes)
+            {
+                if (tn.ImageIndex == 1 && expanded.Contains(tn.FullPath))
+                {
+                    tn.Expand();
+                }
+
+                if (tn.Nodes.Count > 0)
+                {
+                    RestoreExpandedFoldersCore(tn.Nodes, expanded);
+                }
+            }
+        }
+
+        private void RestoreSelectedNode(TreeNodeCollection nodes, string selectedNodePath)
+        {
+            if (string.IsNullOrEmpty(selectedNodePath)) return;
+            TreeNode selectedNode = FindNodeByPath(nodes, selectedNodePath);
+            if (selectedNode == null) return;
+
+            tvFolderTree.SelectedNode = selectedNode;
+            selectedNode.EnsureVisible();
+        }
+
+        private TreeNode FindNodeByPath(TreeNodeCollection nodes, string fullPath)
+        {
+            foreach (TreeNode tn in nodes)
+            {
+                if (string.Equals(tn.FullPath, fullPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    return tn;
+                }
+
+                TreeNode found = FindNodeByPath(tn.Nodes, fullPath);
+                if (found != null) return found;
+            }
+
+            return null;
         }
 
         private void refreshRemoveCheck(TreeNodeCollection nodes)
@@ -531,7 +622,7 @@ namespace mml2vgmIDEx64
             }
         }
 
-        private void refreshAddCheck(TreeNode tn)
+        private void refreshAddCheck(TreeNode tn, bool forceRecursive = false)
         {
             string path1 = Path.GetDirectoryName(basePath);
             path1 = string.IsNullOrEmpty(path1) ? basePath : path1;
@@ -549,15 +640,18 @@ namespace mml2vgmIDEx64
                     while (i < tn.Nodes.Count)
                     {
                         TreeNode ttn = tn.Nodes[i++];
-                        if (ttn.Nodes.Count > 0 && ttn.Nodes[0].Text != "!dmy")
+                        if (ttn.ImageIndex == 1
+                            && (forceRecursive || ttn.IsExpanded)
+                            && ttn.Nodes.Count > 0
+                            && ttn.Nodes[0].Text != "!dmy")
                         {
                             refreshAddCheck(ttn);
                         }
-                        else
+                        else if (ttn.ImageIndex == 1
+                            && (forceRecursive || ttn.IsExpanded)
+                            && ttn.Nodes.Count == 0)
                         {
-                            if (ttn.ImageIndex == 1 && ttn.Nodes.Count == 0)
-                                refreshAddCheck(ttn);
-
+                            refreshAddCheck(ttn);
                         }
 
                         string fpath = Path.Combine(path1, Path.GetFullPath(ttn.FullPath));
@@ -943,6 +1037,7 @@ namespace mml2vgmIDEx64
 
         private void TvFolderTree_AfterExpand(object sender, TreeViewEventArgs e)
         {
+            if (suppressAfterExpandFilter) return;
             refreshFilter(e.Node.Nodes);
         }
 
