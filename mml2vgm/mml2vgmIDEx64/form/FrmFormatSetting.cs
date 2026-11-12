@@ -269,14 +269,14 @@ namespace mml2vgmIDEx64
             {
                 Text = "色...",
                 Location = new Point(72, 32),
-                Size = new Size(120, 26),
+                Size = new Size(74, 26),
                 UseVisualStyleBackColor = false
             };
             btnCommonBackColorSelect.Click += BtnCommonBackColorSelect_Click;
             btnCommonBackColorReset = new Button
             {
                 Text = "リセット",
-                Location = new Point(200, 32),
+                Location = new Point(154, 32),
                 Size = new Size(74, 26)
             };
             btnCommonBackColorReset.Click += BtnCommonBackColorReset_Click;
@@ -372,14 +372,29 @@ namespace mml2vgmIDEx64
 
         private void LayoutFontControls()
         {
-            int rightX = Math.Max(16, gbFont.ClientSize.Width - btnFontSelect.Width - 10);
-            btnFontSelect.Location = new Point(rightX, 20);
-            btnFontReset.Location = new Point(rightX, 50);
-            btnTextColorSelect.Location = new Point(rightX, 80);
-            btnTextColorReset.Location = new Point(Math.Max(16, rightX - btnTextColorReset.Width - 8), 80);
+            const int left = 16;
+            const int right = 16;
+            const int top = 24;
+            const int rowGap = 8;
+            const int colGap = 8;
 
-            lblFontSummary.Location = new Point(16, 24);
-            lblFontSummary.Size = new Size(Math.Max(120, rightX - 24), 56);
+            int contentWidth = Math.Max(120, gbFont.ClientSize.Width - left - right);
+            int buttonWidth = Math.Max(60, (contentWidth - (colGap * 3)) / 4);
+            int sampleHeight = 56;
+
+            lblFontSummary.Location = new Point(left, top);
+            lblFontSummary.Size = new Size(contentWidth, sampleHeight);
+
+            int buttonTop = lblFontSummary.Bottom + rowGap;
+            btnFontSelect.Size = new Size(buttonWidth, btnFontSelect.Height);
+            btnFontReset.Size = new Size(buttonWidth, btnFontReset.Height);
+            btnTextColorSelect.Size = new Size(buttonWidth, btnTextColorSelect.Height);
+            btnTextColorReset.Size = new Size(buttonWidth, btnTextColorReset.Height);
+
+            btnFontSelect.Location = new Point(left, buttonTop);
+            btnFontReset.Location = new Point(btnFontSelect.Right + colGap, buttonTop);
+            btnTextColorSelect.Location = new Point(btnFontReset.Right + colGap, buttonTop);
+            btnTextColorReset.Location = new Point(btnTextColorSelect.Right + colGap, buttonTop);
         }
 
         private void LstCategory_SelectedIndexChanged(object sender, EventArgs e)
@@ -622,14 +637,14 @@ namespace mml2vgmIDEx64
         {
             if (IsUnsetColor(selectedCommonPanelBackColor))
             {
-                btnCommonBackColorSelect.Text = "未設定";
+                btnCommonBackColorSelect.Text = "色...";
                 btnCommonBackColorSelect.BackColor = SystemColors.Control;
                 btnCommonBackColorSelect.ForeColor = SystemColors.ControlText;
                 return;
             }
 
             Color color = Color.FromArgb(selectedCommonPanelBackColor);
-            btnCommonBackColorSelect.Text = $"#{color.R:X2}{color.G:X2}{color.B:X2}";
+            btnCommonBackColorSelect.Text = "色...";
             btnCommonBackColorSelect.BackColor = color;
             btnCommonBackColorSelect.ForeColor = color.GetBrightness() > 0.6f ? Color.Black : Color.White;
         }
@@ -644,7 +659,7 @@ namespace mml2vgmIDEx64
                 return;
             }
 
-            btnTextColorSelect.Text = $"#{color.R:X2}{color.G:X2}{color.B:X2}";
+            btnTextColorSelect.Text = "色...";
             btnTextColorSelect.BackColor = color;
             btnTextColorSelect.ForeColor = color.GetBrightness() > 0.6f ? Color.Black : Color.White;
         }
