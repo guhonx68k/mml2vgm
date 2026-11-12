@@ -90,6 +90,7 @@ namespace mml2vgmIDEx64
 
             textColorCategories = new HashSet<string>
             {
+                "Editor",
                 "Part counter",
                 "Folder",
                 "Error list",
@@ -98,6 +99,7 @@ namespace mml2vgmIDEx64
 
             categoryTextColorValues = new Dictionary<string, int>
             {
+                ["Editor"] = ResolveCategoryTextColorArgb(this.setting, "Editor"),
                 ["Part counter"] = ResolveCategoryTextColorArgb(this.setting, "Part counter"),
                 ["Folder"] = ResolveCategoryTextColorArgb(this.setting, "Folder"),
                 ["Error list"] = ResolveCategoryTextColorArgb(this.setting, "Error list"),
@@ -106,6 +108,7 @@ namespace mml2vgmIDEx64
 
             defaultCategoryTextColorValues = new Dictionary<string, int>
             {
+                ["Editor"] = ResolveCategoryTextColorArgb(defaultSetting, "Editor"),
                 ["Part counter"] = ResolveCategoryTextColorArgb(defaultSetting, "Part counter"),
                 ["Folder"] = ResolveCategoryTextColorArgb(defaultSetting, "Folder"),
                 ["Error list"] = ResolveCategoryTextColorArgb(defaultSetting, "Error list"),
@@ -516,6 +519,7 @@ namespace mml2vgmIDEx64
             setting.other.PanelTextFontSettings.Editor.Name = editor.Name;
             setting.other.PanelTextFontSettings.Editor.Size = editor.Size;
             setting.other.PanelTextFontSettings.Editor.Style = editor.Style;
+            setting.other.PanelTextFontSettings.Editor.Color = categoryTextColorValues["Editor"];
 
             FontSettingValue partCounter = categoryFontValues["Part counter"];
             setting.other.PanelTextFontSettings.PartCounter.Name = partCounter.Name;
@@ -570,7 +574,9 @@ namespace mml2vgmIDEx64
                         ? targetSetting.ColorScheme.Log_ForeColor
                         : targetSetting.other.PanelTextFontSettings.Log.Color;
                 case "Editor":
-                    return targetSetting.ColorScheme.Azuki_ForeColor;
+                    return IsUnsetColor(targetSetting.other.PanelTextFontSettings.Editor.Color)
+                        ? targetSetting.ColorScheme.Azuki_ForeColor
+                        : targetSetting.other.PanelTextFontSettings.Editor.Color;
                 default:
                     return SystemColors.ControlText.ToArgb();
             }

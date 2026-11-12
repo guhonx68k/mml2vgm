@@ -116,7 +116,7 @@ namespace mml2vgmIDEx64
             azukiControl.ShowsDirtBar = setting.editor.showDirtBar;
             azukiControl.ShowsIconBar = setting.editor.showIconBar;
 
-            azukiControl.ColorScheme.ForeColor = Color.FromArgb(setting.ColorScheme.Azuki_ForeColor);
+            ApplyFontSetting(setting.other.PanelTextFontSettings.Editor, setting.ColorScheme.Azuki_ForeColor);
             ApplyBackgroundSetting(setting);
             azukiControl.ColorScheme.IconBarBack = Color.FromArgb(setting.ColorScheme.Azuki_IconBarBack);
             azukiControl.ColorScheme.LineNumberBack = Color.FromArgb(setting.ColorScheme.Azuki_LineNumberBack_Normal);
@@ -158,6 +158,23 @@ namespace mml2vgmIDEx64
             azukiControl.ColorScheme.BackColor = backColor;
         }
 
+        public void ApplyFontSetting(Setting.PanelTextFontSettings.PanelTextFontSetting panelTextFontSetting, int fallbackColor)
+        {
+            try
+            {
+                azukiControl.Font = new Font(
+                    panelTextFontSetting.Name,
+                    panelTextFontSetting.Size,
+                    panelTextFontSetting.Style);
+            }
+            catch
+            {
+                azukiControl.Font = new Font("Consolas", 12.0f, FontStyle.Regular);
+            }
+
+            azukiControl.ColorScheme.ForeColor = ResolveTextColor(panelTextFontSetting.Color, fallbackColor);
+        }
+
         public void ApplyScrollBarTheme(Setting setting)
         {
             Common.ApplyScrollBarTheme(azukiControl, setting.other.ScrollBarTheme);
@@ -169,6 +186,13 @@ namespace mml2vgmIDEx64
             return commonBackColor == Color.Empty.ToArgb() || commonBackColor == 0
                 ? Color.FromArgb(fallbackColor)
                 : Color.FromArgb(commonBackColor);
+        }
+
+        private static Color ResolveTextColor(int otherTextColor, int fallbackColor)
+        {
+            return otherTextColor == Color.Empty.ToArgb() || otherTextColor == 0
+                ? Color.FromArgb(fallbackColor)
+                : Color.FromArgb(otherTextColor);
         }
 
         private IHighlighter setHighlighterVGMZGMZGM()

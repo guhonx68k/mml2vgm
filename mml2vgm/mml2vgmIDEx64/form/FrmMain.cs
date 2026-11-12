@@ -3234,7 +3234,6 @@ namespace mml2vgmIDEx64
                     frmFolderTree.basePath = path1;
                     frmFolderTree.tvFolderTree.Nodes.Clear();
                     frmFolderTree.tvFolderTree.Nodes.Add(d.gwiTree);
-                    frmFolderTree.refresh();
                 }
 
                 this.Text = string.Format("{0} - {1}", appName, d.editor.Text);
@@ -3710,10 +3709,7 @@ namespace mml2vgmIDEx64
             {
                 FrmEditor editor = (FrmEditor)dc;
                 editor.ApplyBackgroundSetting(setting);
-                editor.azukiControl.Font = new Font(
-                    setting.other.PanelTextFontSettings.Editor.Name,
-                    setting.other.PanelTextFontSettings.Editor.Size,
-                    setting.other.PanelTextFontSettings.Editor.Style);
+                editor.ApplyFontSetting(setting.other.PanelTextFontSettings.Editor, setting.ColorScheme.Azuki_ForeColor);
                 editor.ApplyScrollBarTheme(setting);
             }
 
