@@ -119,7 +119,7 @@ namespace mml2vgmIDEx64
                 }
             }
 
-            statusStrip1.BackColor = backColor;
+            statusStrip1.BackColor = Color.Black;
 
             UpdateRowHighlight(activeRowIndex);
         }
