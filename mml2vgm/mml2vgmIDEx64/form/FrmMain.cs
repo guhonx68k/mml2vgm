@@ -1824,7 +1824,7 @@ namespace mml2vgmIDEx64
 
             isSuccess = true;
             //frmPartCounter.ClearCounter();
-            frmErrorList.dataGridView1.Rows.Clear();
+            frmErrorList.ClearErrorRows();
 
             Thread trdStartPreprocess = new Thread(new ThreadStart(startPreprocess));
             trdStartPreprocess.Start();
@@ -1976,7 +1976,7 @@ namespace mml2vgmIDEx64
 
             //frmPartCounter.ClearCounter();//ここではパート表示をクリアしない。コンパイル終了時(成功時)にクリアするため
 
-            frmErrorList.dataGridView1.Rows.Clear();
+            frmErrorList.ClearErrorRows();
 
             Compiling = 1;
             Thread trdStartCompile = new Thread(new ThreadStart(startCompile));

@@ -37,7 +37,11 @@
             this.ClmFileName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ClmLine = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ClmMessage = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.tsslErrorCount = new System.Windows.Forms.ToolStripStatusLabel();
+            this.tsslWarningCount = new System.Windows.Forms.ToolStripStatusLabel();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -79,7 +83,7 @@
             this.dataGridView1.RowHeadersVisible = false;
             this.dataGridView1.RowTemplate.Height = 21;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(582, 155);
+            this.dataGridView1.Size = new System.Drawing.Size(582, 133);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.DataGridView1_CellMouseClick);
             this.dataGridView1.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.DataGridView1_CellMouseDoubleClick);
@@ -122,10 +126,38 @@
             this.ClmMessage.Name = "ClmMessage";
             this.ClmMessage.ReadOnly = true;
             // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsslErrorCount,
+            this.tsslWarningCount});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 133);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.SizingGrip = false;
+            this.statusStrip1.Size = new System.Drawing.Size(582, 22);
+            this.statusStrip1.TabIndex = 1;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // tsslErrorCount
+            // 
+            this.tsslErrorCount.Image = global::mml2vgmIDEx64.Properties.Resources.Error;
+            this.tsslErrorCount.Margin = new System.Windows.Forms.Padding(0, 3, 8, 2);
+            this.tsslErrorCount.Name = "tsslErrorCount";
+            this.tsslErrorCount.Size = new System.Drawing.Size(40, 17);
+            this.tsslErrorCount.Text = "0";
+            // 
+            // tsslWarningCount
+            // 
+            this.tsslWarningCount.Image = global::mml2vgmIDEx64.Properties.Resources.Warning;
+            this.tsslWarningCount.Name = "tsslWarningCount";
+            this.tsslWarningCount.Size = new System.Drawing.Size(40, 17);
+            this.tsslWarningCount.Text = "0";
+            // 
             // FrmErrorList
             // 
             this.AllowDrop = true;
             this.ClientSize = new System.Drawing.Size(582, 155);
+            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.dataGridView1);
             this.DockAreas = ((WeifenLuo.WinFormsUI.Docking.DockAreas)(((((WeifenLuo.WinFormsUI.Docking.DockAreas.Float | WeifenLuo.WinFormsUI.Docking.DockAreas.DockLeft) 
             | WeifenLuo.WinFormsUI.Docking.DockAreas.DockRight) 
@@ -138,7 +170,10 @@
             this.Load += new System.EventHandler(this.FrmErrorList_Load);
             this.DragOver += new System.Windows.Forms.DragEventHandler(this.FrmErrorList_DragOver);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -149,5 +184,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn ClmFileName;
         private System.Windows.Forms.DataGridViewTextBoxColumn ClmLine;
         private System.Windows.Forms.DataGridViewTextBoxColumn ClmMessage;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel tsslErrorCount;
+        private System.Windows.Forms.ToolStripStatusLabel tsslWarningCount;
     }
 }

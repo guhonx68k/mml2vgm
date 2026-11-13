@@ -28,9 +28,12 @@ namespace mml2vgmIDEx64
             InitializeContextMenu();
             dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;
             dataGridView1.GotFocus += DataGridView1_GotFocus;
+            dataGridView1.RowsAdded += DataGridView1_RowsChanged;
+            dataGridView1.RowsRemoved += DataGridView1_RowsChanged;
             dataGridView1.TabStop = false;
             UpdateSortedHeaderStyle();
             ScheduleClearCurrentCellFocus();
+            UpdateStatusSummary();
         }
 
         private void InitializeContextMenu()
@@ -87,6 +90,9 @@ namespace mml2vgmIDEx64
             dataGridView1.DefaultCellStyle.ForeColor = textColor;
             dataGridView1.RowsDefaultCellStyle.ForeColor = textColor;
             dataGridView1.RowTemplate.DefaultCellStyle.ForeColor = textColor;
+            statusStrip1.ForeColor = textColor;
+            tsslErrorCount.ForeColor = textColor;
+            tsslWarningCount.ForeColor = textColor;
             UpdateRowHighlight(activeRowIndex);
         }
 
@@ -112,6 +118,8 @@ namespace mml2vgmIDEx64
                     cell.Style.BackColor = backColor;
                 }
             }
+
+            statusStrip1.BackColor = backColor;
 
             UpdateRowHighlight(activeRowIndex);
         }
@@ -206,6 +214,14 @@ namespace mml2vgmIDEx64
             ScheduleClearCurrentCellFocus();
             if (activeRowIndex >= dataGridView1.Rows.Count) activeRowIndex = -1;
             UpdateRowHighlight(activeRowIndex);
+            UpdateStatusSummary();
+        }
+
+        public void ClearErrorRows()
+        {
+            dataGridView1.Rows.Clear();
+            activeRowIndex = -1;
+            UpdateStatusSummary();
         }
 
         private void FrmErrorList_DragOver(object sender, DragEventArgs e)
@@ -359,6 +375,37 @@ namespace mml2vgmIDEx64
                     dataGridView1.CurrentCell = null;
                 }
             }));
+        }
+
+        private void DataGridView1_RowsChanged(object sender, EventArgs e)
+        {
+            UpdateStatusSummary();
+        }
+
+        private void UpdateStatusSummary()
+        {
+            int errorCount = 0;
+            int warningCount = 0;
+
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                if (row.IsNewRow) continue;
+
+                string level = row.Cells[1]?.Value?.ToString() ?? "";
+                if (level.StartsWith("Error", StringComparison.OrdinalIgnoreCase) || level.StartsWith("エラー", StringComparison.OrdinalIgnoreCase))
+                {
+                    errorCount++;
+                    continue;
+                }
+
+                if (level.StartsWith("Warning", StringComparison.OrdinalIgnoreCase) || level.StartsWith("警告", StringComparison.OrdinalIgnoreCase))
+                {
+                    warningCount++;
+                }
+            }
+
+            tsslErrorCount.Text = errorCount.ToString();
+            tsslWarningCount.Text = warningCount.ToString();
         }
 
         private sealed class ColorSortGlyphHeaderCell : DataGridViewColumnHeaderCell
