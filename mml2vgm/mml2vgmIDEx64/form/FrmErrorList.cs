@@ -9,6 +9,7 @@ namespace mml2vgmIDEx64
     {
         public Action parentUpdate = null;
         public Action<string, long, bool> parentJumpDocument = null;
+        private Setting setting = null;
         private ContextMenuStrip errorListContextMenu = null;
         private ToolStripMenuItem tsmiCopyRow = null;
         private ToolStripMenuItem tsmiCopyAll = null;
@@ -18,6 +19,7 @@ namespace mml2vgmIDEx64
         public FrmErrorList(Setting setting)
         {
             InitializeComponent();
+            this.setting = setting;
             InitializeHeaderCells();
             ApplyBackgroundSetting(setting);
             this.dataGridView1.ForeColor = ResolveTextColor(setting.other.PanelTextFontSettings.ErrorList.Color, setting.ColorScheme.ErrorList_ForeColor);
@@ -34,6 +36,7 @@ namespace mml2vgmIDEx64
             UpdateSortedHeaderStyle();
             ScheduleClearCurrentCellFocus();
             UpdateStatusSummary();
+            ApplyWarningTextColor();
         }
 
         private void InitializeContextMenu()
@@ -90,14 +93,14 @@ namespace mml2vgmIDEx64
             dataGridView1.DefaultCellStyle.ForeColor = textColor;
             dataGridView1.RowsDefaultCellStyle.ForeColor = textColor;
             dataGridView1.RowTemplate.DefaultCellStyle.ForeColor = textColor;
-            statusStrip1.ForeColor = textColor;
-            tsslErrorCount.ForeColor = textColor;
-            tsslWarningCount.ForeColor = textColor;
+            ApplyStatusLabelTheme();
             UpdateRowHighlight(activeRowIndex);
+            ApplyWarningTextColor();
         }
 
         public void ApplyBackgroundSetting(Setting setting)
         {
+            this.setting = setting;
             Color backColor = ResolvePanelBackColor(setting, setting.ColorScheme.ErrorList_BackColor);
             this.BackColor = backColor;
             dataGridView1.BackgroundColor = backColor;
@@ -119,7 +122,7 @@ namespace mml2vgmIDEx64
                 }
             }
 
-            statusStrip1.BackColor = Color.Black;
+            statusStrip1.BackColor = setting.other.ScrollBarTheme == 0 ? Color.White : Color.Black;
 
             UpdateRowHighlight(activeRowIndex);
         }
@@ -141,7 +144,9 @@ namespace mml2vgmIDEx64
 
         public void ApplyScrollBarTheme(Setting setting)
         {
+            this.setting = setting;
             Common.ApplyScrollBarTheme(dataGridView1, setting.other.ScrollBarTheme);
+            ApplyStatusLabelTheme();
         }
         protected override string GetPersistString()
         {
@@ -210,7 +215,17 @@ namespace mml2vgmIDEx64
         public void AddErrorRow(string level, string fileName, string line, string message)
         {
             int sequence = dataGridView1.Rows.Count + 1;
-            dataGridView1.Rows.Add(sequence.ToString(), level, fileName, line, message);
+            int rowIndex = dataGridView1.Rows.Add(sequence.ToString(), level, fileName, line, message);
+            if (rowIndex >= 0 && rowIndex < dataGridView1.Rows.Count && IsWarningLevel(level))
+            {
+                DataGridViewRow row = dataGridView1.Rows[rowIndex];
+                row.DefaultCellStyle.ForeColor = Color.Yellow;
+                foreach (DataGridViewCell cell in row.Cells)
+                {
+                    cell.Style.ForeColor = Color.Yellow;
+                    cell.Style.SelectionForeColor = Color.Yellow;
+                }
+            }
             ScheduleClearCurrentCellFocus();
             if (activeRowIndex >= dataGridView1.Rows.Count) activeRowIndex = -1;
             UpdateRowHighlight(activeRowIndex);
@@ -322,6 +337,7 @@ namespace mml2vgmIDEx64
             Color normalForeColor = dataGridView1.DefaultCellStyle.ForeColor;
             Color activeBackColor = GetActiveRowBackColor(normalBackColor);
             Color activeForeColor = GetReadableTextColor(activeBackColor);
+            Color warningForeColor = Color.Yellow;
 
             for (int i = 0; i < dataGridView1.Rows.Count; i++)
             {
@@ -329,6 +345,10 @@ namespace mml2vgmIDEx64
                 bool isActive = i == rowIndex;
                 Color backColor = isActive ? activeBackColor : normalBackColor;
                 Color foreColor = isActive ? activeForeColor : normalForeColor;
+                if (IsWarningRow(row))
+                {
+                    foreColor = warningForeColor;
+                }
 
                 row.DefaultCellStyle.BackColor = backColor;
                 row.DefaultCellStyle.ForeColor = foreColor;
@@ -343,6 +363,50 @@ namespace mml2vgmIDEx64
             }
 
             dataGridView1.Invalidate();
+        }
+
+        private static bool IsWarningRow(DataGridViewRow row)
+        {
+            if (row == null || row.IsNewRow) return false;
+            string level = row.Cells[1]?.Value?.ToString() ?? "";
+            return IsWarningLevel(level);
+        }
+
+        private static bool IsWarningLevel(string level)
+        {
+            string text = (level ?? "").Trim();
+            return text.IndexOf("Warning", StringComparison.OrdinalIgnoreCase) >= 0
+                || text.IndexOf("警告", StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        private void ApplyWarningTextColor()
+        {
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                if (!IsWarningRow(row)) continue;
+                row.DefaultCellStyle.ForeColor = Color.Yellow;
+                foreach (DataGridViewCell cell in row.Cells)
+                {
+                    cell.Style.ForeColor = Color.Yellow;
+                    cell.Style.SelectionForeColor = Color.Yellow;
+                }
+            }
+        }
+
+        private void ApplyStatusLabelTheme()
+        {
+            if (setting?.other?.ScrollBarTheme == 0)
+            {
+                statusStrip1.ForeColor = Color.Black;
+                tsslErrorCount.ForeColor = Color.Black;
+                tsslWarningCount.ForeColor = Color.Black;
+                return;
+            }
+
+            Color textColor = dataGridView1.DefaultCellStyle.ForeColor;
+            statusStrip1.ForeColor = textColor;
+            tsslErrorCount.ForeColor = textColor;
+            tsslWarningCount.ForeColor = Color.Yellow;
         }
 
         private static Color GetActiveRowBackColor(Color baseColor)

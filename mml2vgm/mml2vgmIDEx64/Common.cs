@@ -75,6 +75,7 @@ namespace mml2vgmIDEx64
 
         private static bool RequiresScrollBarTheme(Control control)
         {
+            if (control is ScrollBar) return true;
             if (control is TextBoxBase) return true;
             if (control is DataGridView) return true;
             if (control is TreeView) return true;
